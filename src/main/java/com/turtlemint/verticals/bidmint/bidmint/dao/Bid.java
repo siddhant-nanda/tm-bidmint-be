@@ -8,6 +8,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
+import java.util.Map;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -21,7 +22,7 @@ public class Bid {
     String sellerId;
     String buyerId;
     Integer amount;
-    List<ProposalQuestion> proposalAnswers;
+    List<Map<String, Object>> proposalAnswers;
     Long createdAt;
     Long updatedAt;
     Long publishedAt;
