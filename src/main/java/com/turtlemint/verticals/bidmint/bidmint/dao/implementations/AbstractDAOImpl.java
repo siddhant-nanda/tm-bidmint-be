@@ -41,7 +41,7 @@ public abstract class AbstractDAOImpl<T> {
         return Mono.justOrEmpty(mongoTemplate.save(t));
     }
 
-    public Mono<UpdateResult> updateProposal(final Query query, final Update update, final Class<Proposal> clazz) {
+    public Mono<UpdateResult> updateProposal(final Query query, final Update update, final Class<T> clazz) {
         return Mono.justOrEmpty(mongoTemplate.updateFirst(query, update, clazz));
     }
 

@@ -1,14 +1,19 @@
 package com.turtlemint.verticals.bidmint.bidmint.dao.implementations;
 
+import com.mongodb.client.result.UpdateResult;
 import com.turtlemint.verticals.bidmint.bidmint.dao.Bid;
+import com.turtlemint.verticals.bidmint.bidmint.dao.Proposal;
 import com.turtlemint.verticals.bidmint.bidmint.dao.interfaces.IBidDao;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.Objects;
 
+import static com.turtlemint.verticals.bidmint.bidmint.constants.BidMintConstants.ID;
 import static com.turtlemint.verticals.bidmint.bidmint.constants.BidMintConstants.PROPOSAL_ID;
 
 @Repository("bidDao")
@@ -27,5 +32,17 @@ public class BidDaoImpl extends AbstractDAOImpl<Bid> implements IBidDao {
             return findAllRx(query, Bid.class);
         }
         return findAllRx(null, Bid.class);
+    }
+
+    public Mono<Bid> createBidDao(Bid bid) {
+        return persistRx(bid);
+    }
+
+    @Override
+    public Mono<UpdateResult> updateBidById(String bidId, Update update) {
+        final Query query = new Query();
+        query.addCriteria(Criteria.where(ID).is(bidId));
+        Mono<UpdateResult> updateResultMono = updateProposal(query, update, Bid.class);
+        return updateResultMono;
     }
 }

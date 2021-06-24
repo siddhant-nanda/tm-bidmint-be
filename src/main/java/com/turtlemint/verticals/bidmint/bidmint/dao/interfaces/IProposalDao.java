@@ -17,4 +17,6 @@ public interface IProposalDao {
     Mono<UpdateResult> updateProposalById(String proposalId, Update update);
 
     Proposal findById(String id);
+
+
 }
