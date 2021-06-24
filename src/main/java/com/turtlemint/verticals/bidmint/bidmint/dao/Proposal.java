@@ -19,7 +19,8 @@ public class Proposal {
     Long createdAt;
     Long updatedAt;
     Long publishedAt;
-    List<ProposalQuestion> proposalQuestionList;
+    Long turnAroundTime;
+    List<ProposalQuestion> proposalQuestions;
     BidMintEnums status;
     String buyerId;
     String sellerId;
