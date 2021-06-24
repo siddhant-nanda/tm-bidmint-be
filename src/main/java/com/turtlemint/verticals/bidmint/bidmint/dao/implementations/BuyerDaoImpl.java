@@ -22,7 +22,12 @@ import static com.turtlemint.verticals.bidmint.bidmint.constants.BidMintConstant
 public class BuyerDaoImpl extends AbstractDAOImpl<Buyer> implements IBuyerDao {
 
     @Override
-    public Mono<Buyer> findById(String id) {
+    public Buyer findById(String id) {
+        return findById(id, Buyer.class);
+    }
+
+    @Override
+    public Mono<Buyer> findByIdRx(String id) {
         return findByIdRx(id, Buyer.class);
     }
 

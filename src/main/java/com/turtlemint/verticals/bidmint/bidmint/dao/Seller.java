@@ -17,4 +17,6 @@ public class Seller {
     String name;
     Long createdAt;
     Long updatedAt;
+    String emailId;
+    String mobileNo;
 }

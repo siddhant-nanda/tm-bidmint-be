@@ -9,7 +9,9 @@ import reactor.core.publisher.Mono;
 
 public interface IBuyerDao {
 
-    Mono<Buyer> findById(String id);
+    Buyer findById(String id);
+
+    Mono<Buyer> findByIdRx(String id);
 
     Mono<Buyer> createBuyer(Buyer buyer);
 

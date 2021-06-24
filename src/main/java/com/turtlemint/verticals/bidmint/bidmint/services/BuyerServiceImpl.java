@@ -1,8 +1,6 @@
 package com.turtlemint.verticals.bidmint.bidmint.services;
 
-import com.turtlemint.verticals.bidmint.bidmint.dao.BidMintDaoFactory;
-import com.turtlemint.verticals.bidmint.bidmint.dao.Buyer;
-import com.turtlemint.verticals.bidmint.bidmint.dao.Proposal;
+import com.turtlemint.verticals.bidmint.bidmint.dao.*;
 import com.turtlemint.verticals.bidmint.bidmint.dto.BuyerDTO;
 import com.turtlemint.verticals.bidmint.bidmint.enums.BidMintEnums;
 import com.turtlemint.verticals.bidmint.bidmint.services.interfaces.IBuyerService;
@@ -104,5 +102,21 @@ public class BuyerServiceImpl implements IBuyerService {
             return Mono.just(buyerDTO);
         });
     }
+
+
+    public Mono<BuyerDTO> acceptBid(String bidId) {
+        BuyerDTO buyerDTO = new BuyerDTO();
+        Bid bid = bidMintDaoFactory.getBuyerDao().findById(bidId);
+        Proposal proposal = bidMintDaoFactory.getBuyerDao().findById(bid.getProposalId());
+        proposal.setStatus(BidMintEnums.ACCEPTED);
+        bid.setStatus(BidMintEnums.ACCEPTED);
+        proposal.setSellerId(bid.getSellerId());
+        Seller seller = bidMintDaoFactory.getBuyerDao().findById(bid.getSellerId());
+        Buyer buyer = bidMintDaoFactory.getBuyerDao().findById(bid.getBuyerId());
+
+    }
+
+
+
 
 }
