@@ -15,9 +15,6 @@ import org.springframework.data.mongodb.core.convert.DefaultMongoTypeMapper;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import static com.turtlemint.verticals.bidmint.bidmint.utils.MongoClientProvider.getMongoClient;
 
 @Slf4j

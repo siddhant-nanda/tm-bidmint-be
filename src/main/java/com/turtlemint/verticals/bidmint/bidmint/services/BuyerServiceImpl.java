@@ -12,10 +12,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 import static com.turtlemint.verticals.bidmint.bidmint.constants.BidMintConstants.*;
 
@@ -85,9 +82,16 @@ public class BuyerServiceImpl implements IBuyerService {
         update.set(PUBLISHED_AT, Instant.now().getEpochSecond());
         update.set(TAT, turnAroundTime);
         update.set(STATUS, BidMintEnums.ACTIVE);
-        return bidMintDaoFactory.getBuyerDao().updateProposalById(proposalId, update).flatMap(
+        return bidMintDaoFactory.getProposalDao().updateProposalById(proposalId, update).flatMap(
                 updateResult -> {
-                    if(NotificationServiceProvider.sendNotification()){
+                    NotificationTemplate notificationTemplate = new NotificationTemplate();
+                    List<String> toEmailList = new ArrayList<>();
+                    List<Seller> sellers = bidMintDaoFactory.getSellerDao().getAllSellers(null);
+                    for (Seller seller: sellers){
+                        toEmailList.add(seller.getEmailId());
+                    }
+                    notificationTemplate.setToEmail(toEmailList);
+                    if (NotificationServiceProvider.sendNotification(notificationTemplate, "Proposal")) {
                         buyerDTO.setStatusCode(HttpStatus.OK.value());
                         buyerDTO.setMessage("Proposal is Published and Notification is Triggered");
                         return Mono.just(buyerDTO);
@@ -96,7 +100,7 @@ public class BuyerServiceImpl implements IBuyerService {
                     buyerDTO.setMessage("Proposal is Published but notification failed");
                     return Mono.just(buyerDTO);
                 }
-        ).onErrorResume(error->{
+        ).onErrorResume(error -> {
             buyerDTO.setStatusCode(HttpStatus.BAD_REQUEST.value());
             buyerDTO.setMessage("Proposal is not Published");
             return Mono.just(buyerDTO);
@@ -106,17 +110,23 @@ public class BuyerServiceImpl implements IBuyerService {
 
     public Mono<BuyerDTO> acceptBid(String bidId) {
         BuyerDTO buyerDTO = new BuyerDTO();
-        Bid bid = bidMintDaoFactory.getBuyerDao().findById(bidId);
-        Proposal proposal = bidMintDaoFactory.getBuyerDao().findById(bid.getProposalId());
+        Bid bid = bidMintDaoFactory.getBidDao().findById(bidId);
+        Proposal proposal = bidMintDaoFactory.getProposalDao().findById(bid.getProposalId());
         proposal.setStatus(BidMintEnums.ACCEPTED);
         bid.setStatus(BidMintEnums.ACCEPTED);
         proposal.setSellerId(bid.getSellerId());
-        Seller seller = bidMintDaoFactory.getBuyerDao().findById(bid.getSellerId());
+        Seller seller = bidMintDaoFactory.getSellerDao().findById(bid.getSellerId());
         Buyer buyer = bidMintDaoFactory.getBuyerDao().findById(bid.getBuyerId());
-
+        NotificationTemplate notificationTemplate = new NotificationTemplate();
+        if (NotificationServiceProvider.sendNotification(notificationTemplate, "Proposal")) {
+            buyerDTO.setStatusCode(HttpStatus.OK.value());
+            buyerDTO.setMessage("Proposal is Published and Notification is Triggered");
+            return Mono.just(buyerDTO);
+        }
+        buyerDTO.setStatusCode(HttpStatus.BAD_REQUEST.value());
+        buyerDTO.setMessage("Proposal is Published but notification failed");
+        return Mono.just(buyerDTO);
     }
-
-
 
 
 }

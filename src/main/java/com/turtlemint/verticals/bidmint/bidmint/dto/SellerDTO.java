@@ -4,7 +4,7 @@ import com.turtlemint.verticals.bidmint.bidmint.dao.Seller;
 import lombok.Data;
 
 @Data
-public class SellerDTO extends BidMintDTO{
+public class SellerDTO extends BidMintDTO {
 
     Seller seller;
 }

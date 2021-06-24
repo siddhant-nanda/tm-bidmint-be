@@ -46,7 +46,7 @@ public class SellerServiceImpl implements ISellerService {
 
     @Override
     public Flux<Seller> getSeller(String sellerId) {
-        return bidMintDaoFactory.getSellerDao().getAllSellers(sellerId);
+        return bidMintDaoFactory.getSellerDao().getAllSellersRx(sellerId);
     }
 }
 

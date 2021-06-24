@@ -1,5 +1,6 @@
 package com.turtlemint.verticals.bidmint.bidmint.dao;
 
+import com.turtlemint.verticals.bidmint.bidmint.dao.interfaces.IBidDao;
 import com.turtlemint.verticals.bidmint.bidmint.dao.interfaces.IBuyerDao;
 import com.turtlemint.verticals.bidmint.bidmint.dao.interfaces.IProposalDao;
 import com.turtlemint.verticals.bidmint.bidmint.dao.interfaces.ISellerDao;
@@ -23,5 +24,10 @@ public class BidMintDaoFactory {
     @Autowired
     @Qualifier("proposalDao")
     private IProposalDao proposalDao;
+
+    @Autowired
+    @Qualifier("bidDao")
+    private IBidDao bidDao;
+
 
 }

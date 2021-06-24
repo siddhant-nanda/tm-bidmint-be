@@ -19,7 +19,7 @@ public class ProposalServiceImpl implements IProposalService {
     @Override
     public Flux<Proposal> getProposals(String status, String type, String id) {
 
-        if(BUYER.equalsIgnoreCase(type))
+        if (BUYER.equalsIgnoreCase(type))
             return bidMintDaoFactory.getProposalDao().getProposalsByBuyerId(id, status);
         else if (SELLER.equalsIgnoreCase(type))
             return bidMintDaoFactory.getProposalDao().getProposalsBySellerId(id, status);
