@@ -6,7 +6,7 @@ public enum BidMintEnums {
     ACTIVE("active"),
     ACCEPTED("accepted");
 
-    private String status;
+    private final String status;
 
     BidMintEnums(String status) {
         this.status = status;
