@@ -4,7 +4,7 @@ import com.turtlemint.verticals.bidmint.bidmint.dao.Proposal;
 import lombok.Data;
 
 @Data
-public class ProposalDTO {
+public class ProposalDTO extends BidMintDTO {
 
     Proposal proposal;
 }

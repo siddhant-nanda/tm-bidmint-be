@@ -1,7 +1,7 @@
 package com.turtlemint.verticals.bidmint.bidmint.controllers;
 
 import com.turtlemint.verticals.bidmint.bidmint.dao.Bid;
-import com.turtlemint.verticals.bidmint.bidmint.dao.Proposal;
+import com.turtlemint.verticals.bidmint.bidmint.dto.BidDTO;
 import com.turtlemint.verticals.bidmint.bidmint.dto.BuyerDTO;
 import com.turtlemint.verticals.bidmint.bidmint.services.BidMintServiceFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -55,5 +55,11 @@ public class BidController {
         return bidMintServiceFactory.getBidService().getBids(sellerId).map(bidDTO -> new ResponseEntity<>(bidDTO, HttpStatus.OK))
                 .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
+    }
+
+    @RequestMapping(value = "/get-bid-info", method = RequestMethod.GET)
+    public Mono<ResponseEntity<BidDTO>> publishProposal(@RequestParam String bidId) {
+        return bidMintServiceFactory.getBidService().getBidDetails(bidId).map(proposalDTO -> new ResponseEntity<>(proposalDTO, HttpStatus.OK))
+                .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }

@@ -6,10 +6,14 @@ import org.springframework.data.mongodb.core.query.Update;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 public interface IBidDao {
     Bid findById(String id);
 
-    Flux<Bid> getAllBidsByProposalId(String proposalId);
+    List<Bid> getAllBidsByProposalId(String proposalId);
+
+    Flux<Bid> getAllBidsByProposalIdRx(String proposalId);
 
     Mono<Bid> createBidDao(Bid bid);
 

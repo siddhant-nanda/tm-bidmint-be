@@ -1,9 +1,11 @@
 package com.turtlemint.verticals.bidmint.bidmint.services;
 
 import com.turtlemint.verticals.bidmint.bidmint.dao.*;
+import com.turtlemint.verticals.bidmint.bidmint.dto.BidDTO;
 import com.turtlemint.verticals.bidmint.bidmint.dto.BuyerDTO;
 import com.turtlemint.verticals.bidmint.bidmint.enums.BidMintEnums;
 import com.turtlemint.verticals.bidmint.bidmint.services.interfaces.IBidService;
+import com.turtlemint.verticals.bidmint.bidmint.services.interfaces.IProposalService;
 import com.turtlemint.verticals.bidmint.bidmint.utils.NotificationServiceProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Update;
@@ -22,6 +24,9 @@ public class BidServiceImpl implements IBidService {
 
     @Autowired
     BidMintDaoFactory bidMintDaoFactory;
+
+    @Autowired
+    IProposalService proposalService;
 
     @Override
     public Mono<BuyerDTO> createBid(Bid bid) {
@@ -56,7 +61,7 @@ public class BidServiceImpl implements IBidService {
         BuyerDTO buyerDTO = new BuyerDTO();
         Update update = new Update();
         update.set(PUBLISHED_AT, Instant.now().getEpochSecond());
-        update.set(TAT, amount);
+        update.set(AMOUNT, amount);
         update.set(STATUS, BidMintEnums.ACTIVE);
         return bidMintDaoFactory.getBidDao().updateBidById(bidId, update).flatMap(
                 updateResult -> {
@@ -66,7 +71,8 @@ public class BidServiceImpl implements IBidService {
                     Buyer buyer = bidMintDaoFactory.getBuyerDao().findById(bid.getBuyerId());
                     toEmailList.add(buyer.getEmailId());
                     notificationTemplate.setToEmail(toEmailList);
-                    if (NotificationServiceProvider.sendNotification(notificationTemplate, "Bid")) {
+                    if (NotificationServiceProvider.sendNotification(notificationTemplate, "Bid")
+                            && proposalService.updateProposalDetails(bid.getProposalId())) {
                         buyerDTO.setStatusCode(HttpStatus.OK.value());
                         buyerDTO.setMessage("Bid is Published and Notification is Triggered");
                         return Mono.just(buyerDTO);
@@ -118,7 +124,7 @@ public class BidServiceImpl implements IBidService {
 
     @Override
     public Flux<Bid> getBids(String proposalId) {
-        return bidMintDaoFactory.getBidDao().getAllBidsByProposalId(proposalId);
+        return bidMintDaoFactory.getBidDao().getAllBidsByProposalIdRx(proposalId);
     }
 
     @Override
@@ -128,6 +134,16 @@ public class BidServiceImpl implements IBidService {
             return bidMintDaoFactory.getBidDao().getBidsBySellerId(sellerId, status);
         else
             return bidMintDaoFactory.getBidDao().getAllBidsBySellerId(sellerId);
+    }
+
+    @Override
+    public Mono<BidDTO> getBidDetails(String bidId) {
+        BidDTO bidDTO = new BidDTO();
+        Bid bid = bidMintDaoFactory.getBidDao().findById(bidId);
+        bidDTO.setBid(bid);
+        bidDTO.setStatusCode(HttpStatus.OK.value());
+        bidDTO.setMessage("SUCCESS");
+        return Mono.just(bidDTO);
     }
 
 }

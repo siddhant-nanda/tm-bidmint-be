@@ -2,6 +2,7 @@ package com.turtlemint.verticals.bidmint.bidmint.controllers;
 
 import com.turtlemint.verticals.bidmint.bidmint.dao.Proposal;
 import com.turtlemint.verticals.bidmint.bidmint.dto.BuyerDTO;
+import com.turtlemint.verticals.bidmint.bidmint.dto.ProposalDTO;
 import com.turtlemint.verticals.bidmint.bidmint.services.BidMintServiceFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,4 +45,11 @@ public class ProposalController {
         return bidMintServiceFactory.getBuyerService().publishProposal(proposalId, turnAroundTime).map(buyerDTO -> new ResponseEntity<>(buyerDTO, HttpStatus.OK))
                 .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
+
+    @RequestMapping(value = "/get-proposal-info", method = RequestMethod.GET)
+    public Mono<ResponseEntity<ProposalDTO>> publishProposal(@RequestParam String proposalId) {
+        return bidMintServiceFactory.getProposalService().getProposalDetails(proposalId).map(proposalDTO -> new ResponseEntity<>(proposalDTO, HttpStatus.OK))
+                .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
 }

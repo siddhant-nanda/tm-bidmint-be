@@ -21,10 +21,11 @@ public class Bid {
     String proposalId;
     String sellerId;
     String buyerId;
-    Integer amount;
+    Long amount;
     List<Map<String, Object>> proposalAnswers;
     Long createdAt;
     Long updatedAt;
     Long publishedAt;
     BidMintEnums status;
+    Double bidScore;
 }

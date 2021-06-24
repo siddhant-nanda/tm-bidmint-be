@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.Objects;
 
 import static com.turtlemint.verticals.bidmint.bidmint.constants.BidMintConstants.*;
@@ -23,13 +24,23 @@ public class BidDaoImpl extends AbstractDAOImpl<Bid> implements IBidDao {
     }
 
     @Override
-    public Flux<Bid> getAllBidsByProposalId(String proposalId) {
+    public Flux<Bid> getAllBidsByProposalIdRx(String proposalId) {
         if (Objects.nonNull(proposalId)) {
             final Query query = new Query();
             query.addCriteria(Criteria.where(PROPOSAL_ID).is(proposalId));
             return findAllRx(query, Bid.class);
         }
         return findAllRx(null, Bid.class);
+    }
+
+    @Override
+    public List<Bid> getAllBidsByProposalId(String proposalId) {
+        if (Objects.nonNull(proposalId)) {
+            final Query query = new Query();
+            query.addCriteria(Criteria.where(PROPOSAL_ID).is(proposalId));
+            return findAll(query, Bid.class);
+        }
+        return findAll(null, Bid.class);
     }
 
     public Mono<Bid> createBidDao(Bid bid) {

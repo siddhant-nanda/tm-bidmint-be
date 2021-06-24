@@ -22,5 +22,11 @@ public class BidMintConstants {
 
     public static final String PROPOSAL_ID = "proposalId";
 
+    public static final String MIN_AMOUNT = "minimumAmount";
+
+    public static final String NO_OF_PARTICIPANTS = "numberOfParticipants";
+
+    public static final String BID_SCORE = "bestBidScore";
+
 
 }

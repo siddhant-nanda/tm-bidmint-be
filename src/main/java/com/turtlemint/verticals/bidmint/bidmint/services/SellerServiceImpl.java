@@ -2,7 +2,6 @@ package com.turtlemint.verticals.bidmint.bidmint.services;
 
 import com.turtlemint.verticals.bidmint.bidmint.dao.BidMintDaoFactory;
 import com.turtlemint.verticals.bidmint.bidmint.dao.Seller;
-import com.turtlemint.verticals.bidmint.bidmint.dao.*;
 import com.turtlemint.verticals.bidmint.bidmint.dto.SellerDTO;
 import com.turtlemint.verticals.bidmint.bidmint.services.interfaces.ISellerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +15,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
-
-import java.util.*;
 
 
 @Service("sellerService")
