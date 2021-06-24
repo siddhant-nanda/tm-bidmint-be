@@ -25,7 +25,7 @@ public class MongoClientProvider {
             try {
                 serverAddresses.add(new ServerAddress(masterDbServerAdderss, dbServerPort));
                 serverAddresses.add(new ServerAddress(slaveDbServerAdderss, dbServerPort));
-                return new MongoClient(serverAddresses, MongoCredential.createCredential("bidmintUser", "bidmint", new char[]{'b'}), options);
+                return new MongoClient(serverAddresses, options);
             } catch (Exception e) {
                 LOG.error("[getMongoClient] Exception occurred ", e);
             }
