@@ -46,5 +46,11 @@ public class BuyerController {
                 .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    @RequestMapping(value = "/get-bids", method = RequestMethod.GET)
+    public Mono<ResponseEntity<BuyerDTO>> getBids(@RequestParam String proposalId) {
+        return bidMintServiceFactory.getBuyerService().acceptBid(proposalId).map(buyerDTO -> new ResponseEntity<>(buyerDTO, HttpStatus.OK))
+                .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
 
 }

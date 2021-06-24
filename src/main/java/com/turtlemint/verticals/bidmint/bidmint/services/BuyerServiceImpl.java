@@ -117,15 +117,23 @@ public class BuyerServiceImpl implements IBuyerService {
         proposal.setSellerId(bid.getSellerId());
         Seller seller = bidMintDaoFactory.getSellerDao().findById(bid.getSellerId());
         Buyer buyer = bidMintDaoFactory.getBuyerDao().findById(bid.getBuyerId());
-        NotificationTemplate notificationTemplate = new NotificationTemplate();
-        if (NotificationServiceProvider.sendNotification(notificationTemplate, "Proposal")) {
+        NotificationTemplate notificationTemplateBuyer = new NotificationTemplate();
+        notificationTemplateBuyer.setToEmail(new ArrayList<String>() {{ add(buyer.getEmailId()); } });
+        NotificationTemplate notificationTemplateSeller = new NotificationTemplate();
+        notificationTemplateSeller.setToEmail(new ArrayList<String>() {{ add(seller.getEmailId()); } });
+        if (NotificationServiceProvider.sendNotification(notificationTemplateBuyer, "ABB")
+        && NotificationServiceProvider.sendNotification(notificationTemplateSeller,"ABS")) {
             buyerDTO.setStatusCode(HttpStatus.OK.value());
-            buyerDTO.setMessage("Proposal is Published and Notification is Triggered");
+            buyerDTO.setMessage("Notification is Triggered");
             return Mono.just(buyerDTO);
         }
         buyerDTO.setStatusCode(HttpStatus.BAD_REQUEST.value());
-        buyerDTO.setMessage("Proposal is Published but notification failed");
+        buyerDTO.setMessage("Notification failed");
         return Mono.just(buyerDTO);
+    }
+
+    public List<Bid> getBids(String proposalId){
+
     }
 
 
