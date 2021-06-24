@@ -47,5 +47,14 @@ public abstract class AbstractDAOImpl<T> {
     public Mono<Proposal> createProposalDao(Proposal proposal){
         return Mono.justOrEmpty(mongoTemplate.save(proposal, "Proposal"));
     }
+
+    protected Flux<T> findAll(final Query query, final Class<T> clazz) {
+        List<T> l;
+        if (Objects.nonNull(query)){
+            l = mongoTemplate.find(query, clazz);
+        }
+        l = mongoTemplate.findAll(clazz);
+        return Flux.fromIterable(l);
+    }
 }
 

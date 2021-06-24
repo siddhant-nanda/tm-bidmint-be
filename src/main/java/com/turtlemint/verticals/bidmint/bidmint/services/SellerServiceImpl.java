@@ -7,6 +7,7 @@ import com.turtlemint.verticals.bidmint.bidmint.services.interfaces.ISellerServi
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Instant;
@@ -42,4 +43,10 @@ public class SellerServiceImpl implements ISellerService {
             return Mono.justOrEmpty(sellerDTO);
         });
     }
+
+    @Override
+    public Flux<Seller> getSeller(String sellerId) {
+        return bidMintDaoFactory.getSellerDao().getAllSellers(sellerId);
+    }
 }
+

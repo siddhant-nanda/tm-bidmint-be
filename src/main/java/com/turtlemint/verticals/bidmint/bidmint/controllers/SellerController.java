@@ -8,9 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -24,7 +26,14 @@ public class SellerController {
     @RequestMapping(value = "/create-seller", method = RequestMethod.POST)
     public Mono<ResponseEntity<SellerDTO>> createSeller(@Valid @RequestBody Seller seller) {
 
-        return bidMintServiceFactory.getSellerService().createSeller(seller).map(buyerDTO -> new ResponseEntity<>(buyerDTO,
+        return bidMintServiceFactory.getSellerService().createSeller(seller).map(sellerDTO -> new ResponseEntity<>(sellerDTO,
+                HttpStatus.OK)).defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @RequestMapping(value = "/get-seller", method = RequestMethod.GET)
+    public Flux<ResponseEntity<Seller>> getSeller(@Valid @RequestParam String sellerId) {
+
+        return bidMintServiceFactory.getSellerService().getSeller(sellerId).map(buyerDTO -> new ResponseEntity<>(buyerDTO,
                 HttpStatus.OK)).defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }
