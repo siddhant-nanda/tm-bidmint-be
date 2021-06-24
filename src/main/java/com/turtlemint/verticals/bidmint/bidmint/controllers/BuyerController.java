@@ -1,6 +1,7 @@
 package com.turtlemint.verticals.bidmint.bidmint.controllers;
 
 import com.turtlemint.verticals.bidmint.bidmint.dao.Buyer;
+import com.turtlemint.verticals.bidmint.bidmint.dao.Proposal;
 import com.turtlemint.verticals.bidmint.bidmint.dto.BuyerDTO;
 import com.turtlemint.verticals.bidmint.bidmint.services.BidMintServiceFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -24,5 +25,20 @@ public class BuyerController {
         return bidMintServiceFactory.getBuyerService().createBuyer(buyer).map(buyerDTO -> new ResponseEntity<>(buyerDTO,
                 HttpStatus.OK)).defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
+
+
+    @RequestMapping(value = "/save-proposal", method = RequestMethod.POST)
+    public Mono<ResponseEntity<BuyerDTO>> saveProposal(@RequestBody Proposal proposal) {
+        return bidMintServiceFactory.getBuyerService().createProposal(proposal).map(buyerDTO -> new ResponseEntity<>(buyerDTO, HttpStatus.OK))
+                .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @RequestMapping(value = "/publish-proposal", method = RequestMethod.POST)
+    public Mono<ResponseEntity<BuyerDTO>> publishProposal(@RequestParam String proposalId,
+                                                          @RequestParam Long turnAroundTime) {
+        return bidMintServiceFactory.getBuyerService().publishProposal(proposalId, turnAroundTime).map(buyerDTO -> new ResponseEntity<>(buyerDTO, HttpStatus.OK))
+                .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
 
 }

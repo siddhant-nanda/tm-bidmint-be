@@ -8,6 +8,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
+import java.util.Map;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -16,11 +17,12 @@ import java.util.List;
 public class Proposal {
     @Id
     String id;
+    String name;
     Long createdAt;
     Long updatedAt;
     Long publishedAt;
     Long turnAroundTime;
-    List<ProposalQuestion> proposalQuestions;
+    List<Map<String, Object>> proposalQuestions;
     BidMintEnums status;
     String buyerId;
     String sellerId;
