@@ -13,8 +13,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.Objects;
 
-import static com.turtlemint.verticals.bidmint.bidmint.constants.BidMintConstants.ID;
-import static com.turtlemint.verticals.bidmint.bidmint.constants.BidMintConstants.PROPOSAL_ID;
+import static com.turtlemint.verticals.bidmint.bidmint.constants.BidMintConstants.*;
 
 @Repository("bidDao")
 public class BidDaoImpl extends AbstractDAOImpl<Bid> implements IBidDao {
@@ -42,7 +41,22 @@ public class BidDaoImpl extends AbstractDAOImpl<Bid> implements IBidDao {
     public Mono<UpdateResult> updateBidById(String bidId, Update update) {
         final Query query = new Query();
         query.addCriteria(Criteria.where(ID).is(bidId));
-        Mono<UpdateResult> updateResultMono = updateProposal(query, update, Bid.class);
+        Mono<UpdateResult> updateResultMono = update(query, update, Bid.class);
         return updateResultMono;
+    }
+
+    @Override
+    public Flux<Bid> getBidsBySellerId(String sellerId, String status) {
+        final Query query = new Query();
+        query.addCriteria(Criteria.where(ID).is(sellerId));
+        query.addCriteria(Criteria.where(STATUS).is(status));
+        return findAllRx(query, Bid.class);
+    }
+
+    @Override
+    public Flux<Bid> getAllBidsBySellerId(String sellerId) {
+        final Query query = new Query();
+        query.addCriteria(Criteria.where(ID).is(sellerId));
+        return findAllRx(query, Bid.class);
     }
 }

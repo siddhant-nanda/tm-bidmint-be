@@ -42,4 +42,5 @@ public class BuyerController {
                 .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    public
 }

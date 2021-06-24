@@ -119,4 +119,13 @@ public class BidServiceImpl implements IBidService {
         return bidMintDaoFactory.getBidDao().getAllBidsByProposalId(proposalId);
     }
 
+    @Override
+    public Flux<Bid> getBids(String sellerId, String status) {
+
+        if (Objects.isNull(status))
+            return bidMintDaoFactory.getBidDao().getBidsBySellerId(sellerId, status);
+        else
+            return bidMintDaoFactory.getBidDao().getAllBidsBySellerId(sellerId);
+    }
+
 }

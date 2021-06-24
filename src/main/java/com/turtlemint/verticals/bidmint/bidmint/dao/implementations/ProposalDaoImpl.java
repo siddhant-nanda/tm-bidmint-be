@@ -37,7 +37,7 @@ public class ProposalDaoImpl extends AbstractDAOImpl<Proposal> implements IPropo
     public Mono<UpdateResult> updateProposalById(String proposalId, Update update) {
         final Query query = new Query();
         query.addCriteria(Criteria.where(ID).is(proposalId));
-        Mono<UpdateResult> updateResultMono = updateProposal(query, update, Proposal.class);
+        Mono<UpdateResult> updateResultMono = update(query, update, Proposal.class);
         return updateResultMono;
     }
 

@@ -1,6 +1,7 @@
 package com.turtlemint.verticals.bidmint.bidmint.controllers;
 
 import com.turtlemint.verticals.bidmint.bidmint.dao.Bid;
+import com.turtlemint.verticals.bidmint.bidmint.dao.Proposal;
 import com.turtlemint.verticals.bidmint.bidmint.dto.BuyerDTO;
 import com.turtlemint.verticals.bidmint.bidmint.services.BidMintServiceFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import javax.validation.Valid;
 
 @Slf4j
 @RestController
@@ -44,5 +47,13 @@ public class BidController {
     public Mono<ResponseEntity<BuyerDTO>> acceptBid(@RequestParam String bidId) {
         return bidMintServiceFactory.getBidService().acceptBid(bidId).map(buyerDTO -> new ResponseEntity<>(buyerDTO, HttpStatus.OK))
                 .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @RequestMapping(value = "/get-bids", method = RequestMethod.GET)
+    public Flux<ResponseEntity<Proposal>> getBids(@Valid @RequestParam String sellerId, @Valid @RequestParam String status) {
+
+        return bidMintServiceFactory.getBidService().getBids(sellerId).map(proposalDTO -> new ResponseEntity<>(proposalDTO, HttpStatus.OK))
+                .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+
     }
 }
