@@ -107,4 +107,9 @@ public class BuyerServiceImpl implements IBuyerService {
             return Mono.just(buyerDTO);
         });
     }
+
+    @Override
+    public Flux<Buyer> getBuyer(String buyerId) {
+        return bidMintDaoFactory.getBuyerDao().getAllBuyersRx(buyerId);
+    }
 }

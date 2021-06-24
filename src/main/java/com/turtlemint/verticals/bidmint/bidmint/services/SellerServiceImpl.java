@@ -1,22 +1,20 @@
 package com.turtlemint.verticals.bidmint.bidmint.services;
 
-import com.turtlemint.verticals.bidmint.bidmint.dao.*;
-import com.turtlemint.verticals.bidmint.bidmint.dto.BuyerDTO;
+import com.turtlemint.verticals.bidmint.bidmint.dao.BidMintDaoFactory;
+import com.turtlemint.verticals.bidmint.bidmint.dao.Seller;
 import com.turtlemint.verticals.bidmint.bidmint.dto.SellerDTO;
-import com.turtlemint.verticals.bidmint.bidmint.enums.BidMintEnums;
 import com.turtlemint.verticals.bidmint.bidmint.services.interfaces.ISellerService;
-import com.turtlemint.verticals.bidmint.bidmint.utils.NotificationServiceProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Instant;
-import java.util.*;
-
-import static com.turtlemint.verticals.bidmint.bidmint.constants.BidMintConstants.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 
 
 @Service("sellerService")

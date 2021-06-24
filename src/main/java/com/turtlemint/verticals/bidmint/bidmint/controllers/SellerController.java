@@ -1,8 +1,6 @@
 package com.turtlemint.verticals.bidmint.bidmint.controllers;
 
-import com.turtlemint.verticals.bidmint.bidmint.dao.Bid;
 import com.turtlemint.verticals.bidmint.bidmint.dao.Seller;
-import com.turtlemint.verticals.bidmint.bidmint.dto.BuyerDTO;
 import com.turtlemint.verticals.bidmint.bidmint.dto.SellerDTO;
 import com.turtlemint.verticals.bidmint.bidmint.services.BidMintServiceFactory;
 import lombok.extern.slf4j.Slf4j;
