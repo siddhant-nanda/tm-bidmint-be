@@ -1,5 +1,7 @@
 package com.turtlemint.verticals.bidmint.bidmint.controllers;
 
+import com.turtlemint.verticals.bidmint.bidmint.dao.Seller;
+import com.turtlemint.verticals.bidmint.bidmint.dto.SellerResponseDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
@@ -10,12 +12,10 @@ import javax.validation.Valid;
 @RestController
 @CrossOrigin(allowedHeaders = "*", origins = "*")
 @RequestMapping(value = "/api/bidmint/v1")
-public class BidMintController {
+public class SellerController {
 
-    @RequestMapping(value = "/getProposal", method = RequestMethod.GET)
-    public Mono<String> getProposal(@Valid @RequestParam String status, @Valid @RequestParam String type,
-                                    @Valid @RequestParam String id) {
-
+    @RequestMapping(value = "/create-seller", method = RequestMethod.POST)
+    public Mono<SellerResponseDTO> createSeller(@Valid @RequestBody Seller seller) {
 
         return Mono.just(null);
     }
