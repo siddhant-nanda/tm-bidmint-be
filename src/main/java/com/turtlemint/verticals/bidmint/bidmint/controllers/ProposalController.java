@@ -1,7 +1,6 @@
 package com.turtlemint.verticals.bidmint.bidmint.controllers;
 
-import com.turtlemint.verticals.bidmint.bidmint.dao.Seller;
-import com.turtlemint.verticals.bidmint.bidmint.dto.SellerDTO;
+import com.turtlemint.verticals.bidmint.bidmint.dao.Proposal;
 import com.turtlemint.verticals.bidmint.bidmint.services.BidMintServiceFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,15 +15,18 @@ import javax.validation.Valid;
 @RestController
 @CrossOrigin(allowedHeaders = "*", origins = "*")
 @RequestMapping(value = "/api/bidmint/v1")
-public class SellerController {
+public class ProposalController {
 
     @Autowired
     BidMintServiceFactory bidMintServiceFactory;
 
-    @RequestMapping(value = "/create-seller", method = RequestMethod.POST)
-    public Mono<ResponseEntity<SellerDTO>> createSeller(@Valid @RequestBody Seller seller) {
+    @RequestMapping(value = "/getProposal", method = RequestMethod.GET)
+    public Mono<ResponseEntity<Proposal>> getProposal(@Valid @RequestParam String status, @Valid @RequestParam String type,
+                                                      @Valid @RequestParam String id) {
 
-        return bidMintServiceFactory.getSellerService().createSeller(seller).map(buyerDTO -> new ResponseEntity<>(buyerDTO,
-                HttpStatus.OK)).defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return bidMintServiceFactory.getProposalService().getProposal(status,
+                type, id).map(proposalDTO -> new ResponseEntity<>(proposalDTO, HttpStatus.OK))
+                .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+
     }
 }
