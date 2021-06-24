@@ -34,10 +34,10 @@ public class BidMint {
     public Map<String, MongoTemplate> getMongoTemplate() {
         LOG.info("[getMongoTemplate] Creating mongo template");
         final Map<String, MongoTemplate> templateMap = new HashMap<>();
-        MongoDbFactory mongoDbFactory = mongoDbmongoDbFactory("service.ironman.planturtle.com", "service.ironman.planturtle.com", 27017);
+        MongoDbFactory mongoDbFactory = mongoDbmongoDbFactory("localhost", "localhost", 27017);
         MappingMongoConverter converter = new MappingMongoConverter(new DefaultDbRefResolver(mongoDbFactory), new MongoMappingContext());
         converter.setTypeMapper(new DefaultMongoTypeMapper(null));
-        templateMap.put("broker", new MongoTemplate(mongoDbFactory, converter));
+        templateMap.put("bidmint", new MongoTemplate(mongoDbFactory, converter));
         return templateMap;
     }
 
