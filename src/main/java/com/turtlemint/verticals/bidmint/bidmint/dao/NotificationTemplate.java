@@ -3,9 +3,7 @@ package com.turtlemint.verticals.bidmint.bidmint.dao;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,5 +16,5 @@ public class NotificationTemplate {
     List<String> toEmail;
     String broker = "yesbank";
     String clientId = "dummy";
-    Map<String, Object> contentMap;
+    Map<String, Object> content;
 }

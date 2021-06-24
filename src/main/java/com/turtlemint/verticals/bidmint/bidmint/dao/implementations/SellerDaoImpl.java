@@ -11,8 +11,7 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 import java.util.Objects;
 
-import static com.turtlemint.verticals.bidmint.bidmint.constants.BidMintConstants.BUYER_ID;
-import static com.turtlemint.verticals.bidmint.bidmint.constants.BidMintConstants.PROPOSAL_ID;
+import static com.turtlemint.verticals.bidmint.bidmint.constants.BidMintConstants.ID;
 
 @Repository("sellerDao")
 public class SellerDaoImpl extends AbstractDAOImpl<Seller> implements ISellerDao {
@@ -34,18 +33,18 @@ public class SellerDaoImpl extends AbstractDAOImpl<Seller> implements ISellerDao
 
     @Override
     public Flux<Seller> getAllSellersRx(String sellerId) {
-        if (Objects.nonNull(sellerId)){
+        if (Objects.nonNull(sellerId)) {
             final Query query = new Query();
-            query.addCriteria(Criteria.where(PROPOSAL_ID).is(sellerId));
+            query.addCriteria(Criteria.where(ID).is(sellerId));
             return findAllRx(query, Seller.class);
         }
         return findAllRx(null, Seller.class);
     }
 
     public List<Seller> getAllSellers(String sellerId) {
-        if (Objects.nonNull(sellerId)){
+        if (Objects.nonNull(sellerId)) {
             final Query query = new Query();
-            query.addCriteria(Criteria.where(PROPOSAL_ID).is(sellerId));
+            query.addCriteria(Criteria.where(ID).is(sellerId));
             return findAll(query, Seller.class);
         }
         return findAll(null, Seller.class);

@@ -51,7 +51,7 @@ public abstract class AbstractDAOImpl<T> {
 
     protected Flux<T> findAllRx(final Query query, final Class<T> clazz) {
         List<T> l;
-        if (Objects.nonNull(query)){
+        if (Objects.nonNull(query)) {
             l = mongoTemplate.find(query, clazz);
         }
         l = mongoTemplate.findAll(clazz);
@@ -60,7 +60,7 @@ public abstract class AbstractDAOImpl<T> {
 
     protected List<T> findAll(final Query query, final Class<T> clazz) {
         List<T> l;
-        if (Objects.nonNull(query)){
+        if (Objects.nonNull(query)) {
             l = mongoTemplate.find(query, clazz);
         }
         l = mongoTemplate.findAll(clazz);

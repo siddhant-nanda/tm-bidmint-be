@@ -10,16 +10,13 @@ import java.util.Map;
 
 public class NotificationServiceProvider {
     public static boolean sendNotification(NotificationTemplate notificationTemplate, String flow) {
-        if("Proposal".equalsIgnoreCase(flow)){
+        if ("Proposal".equalsIgnoreCase(flow)) {
             sendProposalUtils(notificationTemplate);
-        }
-        else if("Bid".equalsIgnoreCase(flow)){
+        } else if ("Bid".equalsIgnoreCase(flow)) {
             sendBidUtils(notificationTemplate);
-        }
-        else if("ABS".equalsIgnoreCase(flow)){
+        } else if ("ABS".equalsIgnoreCase(flow)) {
             sendAcceptBidBuyer(notificationTemplate);
-        }
-        else if("ABB".equalsIgnoreCase(flow)){
+        } else if ("ABB".equalsIgnoreCase(flow)) {
             sendAcceptBidSeller(notificationTemplate);
         }
         final String uri = "https://notifications.ironman.stage.mintpro.in/notifications?broker=yesbank";
@@ -28,7 +25,7 @@ public class NotificationServiceProvider {
         return response.getStatusCode() == HttpStatus.OK;
     }
 
-    public static void sendProposalUtils(NotificationTemplate notificationTemplate){
+    public static void sendProposalUtils(NotificationTemplate notificationTemplate) {
         Map<String, Object> contentMap = new HashMap<>();
         contentMap.put("subject", "BidMint Proposal Mail");
         contentMap.put("fromEmail", "no-reply@turtlemint.com");
@@ -36,10 +33,10 @@ public class NotificationServiceProvider {
         contentMap.put("isMigrated", true);
         contentMap.put("templateCode", "CUSTOMER_CONSENT_MAIL_yesbank");
         contentMap.put("fromName", "Bidmint");
-        notificationTemplate.setContentMap(contentMap);
+        notificationTemplate.setContent(contentMap);
     }
 
-    public static void sendBidUtils(NotificationTemplate notificationTemplate){
+    public static void sendBidUtils(NotificationTemplate notificationTemplate) {
         Map<String, Object> contentMap = new HashMap<>();
         contentMap.put("subject", "BidMint Bid Mail");
         contentMap.put("fromEmail", "no-reply@turtlemint.com");
@@ -47,10 +44,10 @@ public class NotificationServiceProvider {
         contentMap.put("isMigrated", true);
         contentMap.put("templateCode", "CUSTOMER_CONSENT_MAIL_yesbank");
         contentMap.put("fromName", "BidMint");
-        notificationTemplate.setContentMap(contentMap);
+        notificationTemplate.setContent(contentMap);
     }
 
-    public static void sendAcceptBidBuyer(NotificationTemplate notificationTemplate){
+    public static void sendAcceptBidBuyer(NotificationTemplate notificationTemplate) {
         Map<String, Object> contentMap = new HashMap<>();
         contentMap.put("subject", "BidMint Accept Bid Mail - Buyer");
         contentMap.put("fromEmail", "no-reply@turtlemint.com");
@@ -58,10 +55,10 @@ public class NotificationServiceProvider {
         contentMap.put("isMigrated", true);
         contentMap.put("templateCode", "CUSTOMER_CONSENT_MAIL_yesbank");
         contentMap.put("fromName", "BidMint");
-        notificationTemplate.setContentMap(contentMap);
+        notificationTemplate.setContent(contentMap);
     }
 
-    public static void sendAcceptBidSeller(NotificationTemplate notificationTemplate){
+    public static void sendAcceptBidSeller(NotificationTemplate notificationTemplate) {
         Map<String, Object> contentMap = new HashMap<>();
         contentMap.put("subject", "BidMint Accept Bid Mail - Seller");
         contentMap.put("fromEmail", "no-reply@turtlemint.com");
@@ -69,7 +66,7 @@ public class NotificationServiceProvider {
         contentMap.put("isMigrated", true);
         contentMap.put("templateCode", "CUSTOMER_CONSENT_MAIL_yesbank");
         contentMap.put("fromName", "BidMint");
-        notificationTemplate.setContentMap(contentMap);
+        notificationTemplate.setContent(contentMap);
     }
 
 

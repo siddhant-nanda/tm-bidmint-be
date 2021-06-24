@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Instant;
@@ -87,7 +88,7 @@ public class BuyerServiceImpl implements IBuyerService {
                     NotificationTemplate notificationTemplate = new NotificationTemplate();
                     List<String> toEmailList = new ArrayList<>();
                     List<Seller> sellers = bidMintDaoFactory.getSellerDao().getAllSellers(null);
-                    for (Seller seller: sellers){
+                    for (Seller seller : sellers) {
                         toEmailList.add(seller.getEmailId());
                     }
                     notificationTemplate.setToEmail(toEmailList);
@@ -118,11 +119,17 @@ public class BuyerServiceImpl implements IBuyerService {
         Seller seller = bidMintDaoFactory.getSellerDao().findById(bid.getSellerId());
         Buyer buyer = bidMintDaoFactory.getBuyerDao().findById(bid.getBuyerId());
         NotificationTemplate notificationTemplateBuyer = new NotificationTemplate();
-        notificationTemplateBuyer.setToEmail(new ArrayList<String>() {{ add(buyer.getEmailId()); } });
+        notificationTemplateBuyer.setToEmail(new ArrayList<String>() {
+            {
+                add(buyer.getEmailId());
+            } });
         NotificationTemplate notificationTemplateSeller = new NotificationTemplate();
-        notificationTemplateSeller.setToEmail(new ArrayList<String>() {{ add(seller.getEmailId()); } });
+        notificationTemplateSeller.setToEmail(new ArrayList<String>() {
+            {
+                add(seller.getEmailId());
+            } });
         if (NotificationServiceProvider.sendNotification(notificationTemplateBuyer, "ABB")
-        && NotificationServiceProvider.sendNotification(notificationTemplateSeller,"ABS")) {
+                && NotificationServiceProvider.sendNotification(notificationTemplateSeller, "ABS")) {
             buyerDTO.setStatusCode(HttpStatus.OK.value());
             buyerDTO.setMessage("Notification is Triggered");
             return Mono.just(buyerDTO);
@@ -132,8 +139,8 @@ public class BuyerServiceImpl implements IBuyerService {
         return Mono.just(buyerDTO);
     }
 
-    public List<Bid> getBids(String proposalId){
-
+    public Flux<Bid> getBids(String proposalId) {
+        return bidMintDaoFactory.getBidDao().getAllBidsByProposalId(proposalId);
     }
 
 

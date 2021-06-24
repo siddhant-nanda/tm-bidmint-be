@@ -2,7 +2,6 @@ package com.turtlemint.verticals.bidmint.bidmint.dao.implementations;
 
 import com.mongodb.client.result.UpdateResult;
 import com.turtlemint.verticals.bidmint.bidmint.dao.Proposal;
-import com.turtlemint.verticals.bidmint.bidmint.dao.Seller;
 import com.turtlemint.verticals.bidmint.bidmint.dao.interfaces.IProposalDao;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -37,7 +36,7 @@ public class ProposalDaoImpl extends AbstractDAOImpl<Proposal> implements IPropo
     @Override
     public Mono<UpdateResult> updateProposalById(String proposalId, Update update) {
         final Query query = new Query();
-        query.addCriteria(Criteria.where(PROPOSAL_ID).is(proposalId));
+        query.addCriteria(Criteria.where(ID).is(proposalId));
         Mono<UpdateResult> updateResultMono = updateProposal(query, update, Proposal.class);
         return updateResultMono;
     }
@@ -48,12 +47,11 @@ public class ProposalDaoImpl extends AbstractDAOImpl<Proposal> implements IPropo
     }
 
 
-
     @Override
     public Flux<Proposal> getAllProposals(String proposalId) {
-        if (Objects.nonNull(proposalId)){
+        if (Objects.nonNull(proposalId)) {
             final Query query = new Query();
-            query.addCriteria(Criteria.where(PROPOSAL_ID).is(proposalId));
+            query.addCriteria(Criteria.where(ID).is(proposalId));
             return findAllRx(query, Proposal.class);
         }
         return findAllRx(null, Proposal.class);

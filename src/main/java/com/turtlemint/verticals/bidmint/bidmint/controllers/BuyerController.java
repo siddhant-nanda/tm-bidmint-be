@@ -1,5 +1,6 @@
 package com.turtlemint.verticals.bidmint.bidmint.controllers;
 
+import com.turtlemint.verticals.bidmint.bidmint.dao.Bid;
 import com.turtlemint.verticals.bidmint.bidmint.dao.Buyer;
 import com.turtlemint.verticals.bidmint.bidmint.dao.Proposal;
 import com.turtlemint.verticals.bidmint.bidmint.dto.BuyerDTO;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Slf4j
@@ -47,8 +49,8 @@ public class BuyerController {
     }
 
     @RequestMapping(value = "/get-bids", method = RequestMethod.GET)
-    public Mono<ResponseEntity<BuyerDTO>> getBids(@RequestParam String proposalId) {
-        return bidMintServiceFactory.getBuyerService().acceptBid(proposalId).map(buyerDTO -> new ResponseEntity<>(buyerDTO, HttpStatus.OK))
+    public Flux<ResponseEntity<Bid>> getBids(@RequestParam String proposalId) {
+        return bidMintServiceFactory.getBuyerService().getBids(proposalId).map(bid -> new ResponseEntity<>(bid, HttpStatus.OK))
                 .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 

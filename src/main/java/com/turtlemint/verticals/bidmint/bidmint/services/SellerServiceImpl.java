@@ -11,6 +11,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -33,6 +35,9 @@ public class SellerServiceImpl implements ISellerService {
         }
         return bidMintDaoFactory.getSellerDao().createSeller(seller).flatMap(
                 sellerNew -> {
+                    Map<String, Object> sellerMap = new HashMap<>();
+                    sellerMap.put("sellerId", sellerNew.getId());
+                    sellerDTO.setMeta(sellerMap);
                     sellerDTO.setStatusCode(HttpStatus.CREATED.value());
                     sellerDTO.setMessage("Seller Created");
                     return Mono.just(sellerDTO);
