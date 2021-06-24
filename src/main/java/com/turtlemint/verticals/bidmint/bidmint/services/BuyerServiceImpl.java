@@ -1,8 +1,9 @@
 package com.turtlemint.verticals.bidmint.bidmint.services;
 
+import com.turtlemint.verticals.bidmint.bidmint.dao.BidMintDaoFactory;
 import com.turtlemint.verticals.bidmint.bidmint.dao.Buyer;
-import com.turtlemint.verticals.bidmint.bidmint.dao.implementations.BuyerDao;
 import com.turtlemint.verticals.bidmint.bidmint.dto.BuyerDTO;
+import com.turtlemint.verticals.bidmint.bidmint.services.interfaces.IBuyerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -12,11 +13,11 @@ import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
 
-@Service
-public class BuyerService {
+@Service("buyerService")
+public class BuyerServiceImpl implements IBuyerService {
 
     @Autowired
-    BuyerDao buyerDao;
+    BidMintDaoFactory bidMintDaoFactory;
 
     public Mono<BuyerDTO> createBuyer(Buyer buyer) {
         BuyerDTO buyerDTO = new BuyerDTO();
@@ -28,7 +29,7 @@ public class BuyerService {
         } else {
             buyer.setUpdatedAt(Instant.now().getEpochSecond());
         }
-        return buyerDao.createBuyerDao("bidmint", buyer).flatMap(
+        return bidMintDaoFactory.getBuyerDao().createBuyer(buyer).flatMap(
                 buyerNew -> {
                     buyerDTO.setStatusCode(HttpStatus.CREATED.value());
                     buyerDTO.setMessage("Buyer Created");

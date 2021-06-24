@@ -31,14 +31,11 @@ public class BidMint {
     }
 
     @Bean(name = "mongoTemplateMap")
-    public Map<String, MongoTemplate> getMongoTemplate() {
-        LOG.info("[getMongoTemplate] Creating mongo template");
-        final Map<String, MongoTemplate> templateMap = new HashMap<>();
+    public MongoTemplate getMongoTemplate() {
         MongoDbFactory mongoDbFactory = mongoDbmongoDbFactory("localhost", "localhost", 27017);
         MappingMongoConverter converter = new MappingMongoConverter(new DefaultDbRefResolver(mongoDbFactory), new MongoMappingContext());
         converter.setTypeMapper(new DefaultMongoTypeMapper(null));
-        templateMap.put("bidmint", new MongoTemplate(mongoDbFactory, converter));
-        return templateMap;
+        return new MongoTemplate(mongoDbFactory, converter);
     }
 
     private MongoDbFactory mongoDbmongoDbFactory(String masterDbServerAddress, String slaveDbServerAddress, Integer dbServerPort) {
