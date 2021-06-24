@@ -1,6 +1,7 @@
 package com.turtlemint.verticals.bidmint.bidmint.services;
 
 
+import com.turtlemint.verticals.bidmint.bidmint.services.interfaces.IBidService;
 import com.turtlemint.verticals.bidmint.bidmint.services.interfaces.IBuyerService;
 import com.turtlemint.verticals.bidmint.bidmint.services.interfaces.IProposalService;
 import com.turtlemint.verticals.bidmint.bidmint.services.interfaces.ISellerService;
@@ -24,4 +25,8 @@ public class BidMintServiceFactory {
     @Autowired
     @Qualifier("proposalService")
     private IProposalService proposalService;
+
+    @Autowired
+    @Qualifier("bidService")
+    private IBidService bidService;
 }

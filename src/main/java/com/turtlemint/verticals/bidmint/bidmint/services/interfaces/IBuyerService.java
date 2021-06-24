@@ -13,8 +13,4 @@ public interface IBuyerService {
     Mono<BuyerDTO> createProposal(Proposal proposal);
 
     Mono<BuyerDTO> publishProposal(String proposalId, Long turnAroundTime);
-
-    Mono<BuyerDTO> acceptBid(String bidId);
-
-    Flux<Bid> getBids(String proposalId);
 }

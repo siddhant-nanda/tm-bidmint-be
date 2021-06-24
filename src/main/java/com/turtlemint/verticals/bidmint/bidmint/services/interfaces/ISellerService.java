@@ -15,7 +15,4 @@ public interface ISellerService {
 
     Flux<Seller> getSeller(String sellerId);
 
-    Mono<BuyerDTO> createBid(Bid bid);
-
-    Mono<BuyerDTO> publishBid(String bidId, Integer amount);
 }
