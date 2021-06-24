@@ -1,6 +1,7 @@
 package com.turtlemint.verticals.bidmint.bidmint.dao;
 
 import com.turtlemint.verticals.bidmint.bidmint.dao.interfaces.IBuyerDao;
+import com.turtlemint.verticals.bidmint.bidmint.dao.interfaces.IProposalDao;
 import com.turtlemint.verticals.bidmint.bidmint.dao.interfaces.ISellerDao;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,5 +19,9 @@ public class BidMintDaoFactory {
     @Autowired
     @Qualifier("sellerDao")
     private ISellerDao sellerDao;
+
+    @Autowired
+    @Qualifier("proposalDao")
+    private IProposalDao proposalDao;
 
 }

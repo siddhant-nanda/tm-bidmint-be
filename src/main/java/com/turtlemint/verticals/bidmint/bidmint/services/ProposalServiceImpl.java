@@ -5,7 +5,10 @@ import com.turtlemint.verticals.bidmint.bidmint.dao.Proposal;
 import com.turtlemint.verticals.bidmint.bidmint.services.interfaces.IProposalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Mono;
+import reactor.core.publisher.Flux;
+
+import static com.turtlemint.verticals.bidmint.bidmint.constants.BidMintConstants.BUYER;
+import static com.turtlemint.verticals.bidmint.bidmint.constants.BidMintConstants.SELLER;
 
 @Service("proposalService")
 public class ProposalServiceImpl implements IProposalService {
@@ -14,7 +17,13 @@ public class ProposalServiceImpl implements IProposalService {
     BidMintDaoFactory bidMintDaoFactory;
 
     @Override
-    public Mono<Proposal> getProposal(String status, String type, String id) {
-        return null;
+    public Flux<Proposal> getProposals(String status, String type, String id) {
+
+        if(BUYER.equalsIgnoreCase(type))
+            return bidMintDaoFactory.getProposalDao().getProposalsByBuyerId(id, status);
+        else if (SELLER.equalsIgnoreCase(type))
+            return bidMintDaoFactory.getProposalDao().getProposalsBySellerId(id, status);
+
+        return Flux.just(null);
     }
 }

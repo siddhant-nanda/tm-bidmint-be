@@ -7,8 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.Objects;
 
 
@@ -25,6 +27,13 @@ public abstract class AbstractDAOImpl<T> {
 
     protected T findById(final Object id, final Class<T> clazz) {
         return mongoTemplate.findById(id, clazz);
+    }
+
+    protected Flux<T> findByQuery(final Query query, final Class<T> clazz) {
+        final List<T> l = mongoTemplate.find(query, clazz);
+        if(l.isEmpty()) {
+            return Flux.empty();
+        } return Flux.fromIterable(l);
     }
 
     public Mono<T> persistRx(final T t) {

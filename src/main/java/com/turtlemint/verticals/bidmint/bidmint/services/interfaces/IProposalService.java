@@ -1,10 +1,10 @@
 package com.turtlemint.verticals.bidmint.bidmint.services.interfaces;
 
 import com.turtlemint.verticals.bidmint.bidmint.dao.Proposal;
-import reactor.core.publisher.Mono;
+import reactor.core.publisher.Flux;
 
 
 public interface IProposalService {
 
-    Mono<Proposal> getProposal(String status, String type, String id);
+    Flux<Proposal> getProposals(String status, String type, String id);
 }

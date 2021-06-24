@@ -9,4 +9,13 @@ public class BidMintConstants {
     public static final String TAT = "turnAroundTime";
 
     public static final String STATUS = "status";
+
+    public static final String BUYER = "buyer";
+
+    public static final String SELLER = "seller";
+
+    public static final String BUYER_ID = "buyerId";
+
+    public static final String SELLER_ID = "sellerId";
+
 }

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
@@ -20,11 +21,11 @@ public class ProposalController {
     @Autowired
     BidMintServiceFactory bidMintServiceFactory;
 
-    @RequestMapping(value = "/getProposal", method = RequestMethod.GET)
-    public Mono<ResponseEntity<Proposal>> getProposal(@Valid @RequestParam String status, @Valid @RequestParam String type,
-                                                      @Valid @RequestParam String id) {
+    @RequestMapping(value = "/get-proposals", method = RequestMethod.GET)
+    public Flux<ResponseEntity<Proposal>> getProposals(@Valid @RequestParam String status, @Valid @RequestParam String type,
+                                                       @Valid @RequestParam String id) {
 
-        return bidMintServiceFactory.getProposalService().getProposal(status,
+        return bidMintServiceFactory.getProposalService().getProposals(status,
                 type, id).map(proposalDTO -> new ResponseEntity<>(proposalDTO, HttpStatus.OK))
                 .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
