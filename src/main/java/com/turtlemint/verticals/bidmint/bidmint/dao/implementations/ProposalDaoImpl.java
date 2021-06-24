@@ -20,16 +20,24 @@ public class ProposalDaoImpl extends AbstractDAOImpl<Proposal> implements IPropo
     @Override
     public Flux<Proposal> getProposalsByBuyerId(String buyerId, String status) {
         final Query query = new Query();
-        query.addCriteria(Criteria.where(BUYER_ID).is(buyerId));
-        query.addCriteria(Criteria.where(STATUS).is(status));
+        if (buyerId != null) {
+            query.addCriteria(Criteria.where(BUYER_ID).is(buyerId));
+        }
+        if (status != null) {
+            query.addCriteria(Criteria.where(STATUS).is(status));
+        }
         return findByQuery(query, Proposal.class);
     }
 
     @Override
     public Flux<Proposal> getProposalsBySellerId(String sellerId, String status) {
         final Query query = new Query();
-        query.addCriteria(Criteria.where(SELLER_ID).is(sellerId));
-        query.addCriteria(Criteria.where(STATUS).is(status));
+        if (sellerId != null) {
+            query.addCriteria(Criteria.where(SELLER_ID).is(sellerId));
+        }
+        if (status != null) {
+            query.addCriteria(Criteria.where(STATUS).is(status));
+        }
         return findByQuery(query, Proposal.class);
     }
 
@@ -37,8 +45,7 @@ public class ProposalDaoImpl extends AbstractDAOImpl<Proposal> implements IPropo
     public Mono<UpdateResult> updateProposalById(String proposalId, Update update) {
         final Query query = new Query();
         query.addCriteria(Criteria.where(ID).is(proposalId));
-        Mono<UpdateResult> updateResultMono = update(query, update, Proposal.class);
-        return updateResultMono;
+        return update(query, update, Proposal.class);
     }
 
     @Override

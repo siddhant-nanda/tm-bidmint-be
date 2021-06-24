@@ -49,10 +49,10 @@ public class BidController {
                 .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @RequestMapping(value = "/get-bids", method = RequestMethod.GET)
-    public Flux<ResponseEntity<Proposal>> getBids(@Valid @RequestParam String sellerId, @Valid @RequestParam String status) {
+    @RequestMapping(value = "/get-sellers-bids", method = RequestMethod.GET)
+    public Flux<ResponseEntity<Bid>> getBids(@Valid @RequestParam String sellerId, @Valid @RequestParam String status) {
 
-        return bidMintServiceFactory.getBidService().getBids(sellerId).map(proposalDTO -> new ResponseEntity<>(proposalDTO, HttpStatus.OK))
+        return bidMintServiceFactory.getBidService().getBids(sellerId).map(bidDTO -> new ResponseEntity<>(bidDTO, HttpStatus.OK))
                 .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
     }

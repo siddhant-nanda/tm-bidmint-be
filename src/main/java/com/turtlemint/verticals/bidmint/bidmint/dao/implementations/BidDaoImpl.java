@@ -2,7 +2,6 @@ package com.turtlemint.verticals.bidmint.bidmint.dao.implementations;
 
 import com.mongodb.client.result.UpdateResult;
 import com.turtlemint.verticals.bidmint.bidmint.dao.Bid;
-import com.turtlemint.verticals.bidmint.bidmint.dao.Proposal;
 import com.turtlemint.verticals.bidmint.bidmint.dao.interfaces.IBidDao;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;

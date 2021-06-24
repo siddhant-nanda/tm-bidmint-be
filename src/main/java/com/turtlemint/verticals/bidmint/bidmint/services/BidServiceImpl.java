@@ -63,7 +63,7 @@ public class BidServiceImpl implements IBidService {
                     NotificationTemplate notificationTemplate = new NotificationTemplate();
                     List<String> toEmailList = new ArrayList<>();
                     Bid bid = bidMintDaoFactory.getBidDao().findById(bidId);
-                    Buyer buyer= bidMintDaoFactory.getBuyerDao().findById(bid.getBuyerId());
+                    Buyer buyer = bidMintDaoFactory.getBuyerDao().findById(bid.getBuyerId());
                     toEmailList.add(buyer.getEmailId());
                     notificationTemplate.setToEmail(toEmailList);
                     if (NotificationServiceProvider.sendNotification(notificationTemplate, "Bid")) {
@@ -97,12 +97,14 @@ public class BidServiceImpl implements IBidService {
         notificationTemplateBuyer.setToEmail(new ArrayList<String>() {
             {
                 add(buyer.getEmailId());
-            } });
+            }
+        });
         NotificationTemplate notificationTemplateSeller = new NotificationTemplate();
         notificationTemplateSeller.setToEmail(new ArrayList<String>() {
             {
                 add(seller.getEmailId());
-            } });
+            }
+        });
         if (NotificationServiceProvider.sendNotification(notificationTemplateBuyer, "ABB")
                 && NotificationServiceProvider.sendNotification(notificationTemplateSeller, "ABS")) {
             buyerDTO.setStatusCode(HttpStatus.OK.value());
