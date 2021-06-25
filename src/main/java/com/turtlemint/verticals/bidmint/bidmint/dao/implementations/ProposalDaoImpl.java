@@ -3,6 +3,7 @@ package com.turtlemint.verticals.bidmint.bidmint.dao.implementations;
 import com.mongodb.client.result.UpdateResult;
 import com.turtlemint.verticals.bidmint.bidmint.dao.Proposal;
 import com.turtlemint.verticals.bidmint.bidmint.dao.interfaces.IProposalDao;
+import com.turtlemint.verticals.bidmint.bidmint.enums.BidMintEnums;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -20,9 +21,7 @@ public class ProposalDaoImpl extends AbstractDAOImpl<Proposal> implements IPropo
     @Override
     public Flux<Proposal> getProposalsByBuyerId(String buyerId, String status) {
         final Query query = new Query();
-        if (buyerId != null) {
-            query.addCriteria(Criteria.where(BUYER_ID).is(buyerId));
-        }
+        query.addCriteria(Criteria.where(BUYER_ID).is(buyerId));
         if (status != null) {
             query.addCriteria(Criteria.where(STATUS).is(status));
         }
@@ -35,8 +34,11 @@ public class ProposalDaoImpl extends AbstractDAOImpl<Proposal> implements IPropo
         if (sellerId != null) {
             query.addCriteria(Criteria.where(SELLER_ID).is(sellerId));
         }
-        if (status != null) {
+        if (!BidMintEnums.DRAFT.getStatus().equalsIgnoreCase(status)) {
             query.addCriteria(Criteria.where(STATUS).is(status));
+        }
+        else {
+            query.addCriteria(Criteria.where(STATUS).ne(BidMintEnums.DRAFT));
         }
         return findByQuery(query, Proposal.class);
     }

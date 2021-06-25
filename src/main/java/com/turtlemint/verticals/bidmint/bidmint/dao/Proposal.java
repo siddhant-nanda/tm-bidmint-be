@@ -26,9 +26,7 @@ public class Proposal {
     BidMintEnums status;
     String buyerId;
     String sellerId;
-    Double minimumAmount = Double.MAX_VALUE;
     Integer numberOfParticipants = 0;
-    Double bestBidScore = Double.MIN_VALUE;
     Bid bestBid;
     Double avgBidAmount;
     Integer avgAgreementOnQuestions;

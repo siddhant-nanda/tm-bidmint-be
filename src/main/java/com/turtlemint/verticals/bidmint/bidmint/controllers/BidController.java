@@ -38,7 +38,7 @@ public class BidController {
 
     @RequestMapping(value = "/publish-bid", method = RequestMethod.POST)
     public Mono<ResponseEntity<BuyerDTO>> publishBid(@RequestParam String bidId,
-                                                     @RequestParam Integer amount) {
+                                                     @RequestParam Double amount) {
         return bidMintServiceFactory.getBidService().publishBid(bidId, amount).map(bid -> new ResponseEntity<>(bid, HttpStatus.OK))
                 .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
@@ -52,7 +52,7 @@ public class BidController {
     @RequestMapping(value = "/get-sellers-bids", method = RequestMethod.GET)
     public Flux<ResponseEntity<Bid>> getBids(@Valid @RequestParam String sellerId, @Valid @RequestParam String status) {
 
-        return bidMintServiceFactory.getBidService().getBids(sellerId).map(bidDTO -> new ResponseEntity<>(bidDTO, HttpStatus.OK))
+        return bidMintServiceFactory.getBidService().getBids(sellerId, status).map(bidDTO -> new ResponseEntity<>(bidDTO, HttpStatus.OK))
                 .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
     }

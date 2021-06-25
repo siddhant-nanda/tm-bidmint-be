@@ -62,7 +62,7 @@ public class BidServiceImpl implements IBidService {
     }
 
     @Override
-    public Mono<BuyerDTO> publishBid(String bidId, Integer amount) {
+    public Mono<BuyerDTO> publishBid(String bidId, Double amount) {
         BuyerDTO buyerDTO = new BuyerDTO();
         Update update = new Update();
         update.set(PUBLISHED_AT, Instant.now().getEpochSecond());
@@ -70,17 +70,21 @@ public class BidServiceImpl implements IBidService {
         update.set(STATUS, BidMintEnums.ACTIVE);
         Bid bid = bidMintDaoFactory.getBidDao().findById(bidId);
         Proposal proposal = bidMintDaoFactory.getProposalDao().findById(bid.getProposalId());
+        bid.setAmount(amount);
+        bid.setPublishedAt(Instant.now().getEpochSecond());
+        bid.setStatus(BidMintEnums.ACTIVE);
+        Integer agreed = ScoreUtils.computeAgreementOnQuestions(proposal.getProposalQuestions().get(0),
+                bid.getProposalAnswers().get(0));
+        bid.setAgreementOnQuestions(agreed);
         if (proposal.getNumberOfParticipants() == 0) {
             BidStats bidStats = new BidStats();
             bidStats.setBidScore(100.00);
             bidStats.setRunningBids(1);
             bidStats.setExcessAmount(0.00);
-            Integer agreed = ScoreUtils.computeAgreementOnQuestions(proposal.getProposalQuestions().get(0),
-                    bid.getProposalAnswers().get(0));
-            bid.setAgreementOnQuestions(agreed);
             bidStats.setAgreementOnQuestions(agreed);
             update.set("bidStats", bidStats);
             //This is proposal best bid
+            bid.setBidStats(bidStats);
             proposal.setBestBid(bid);
         } else {
             getBestBidAndUpdateOtherBids(proposal, bid);
@@ -175,14 +179,13 @@ public class BidServiceImpl implements IBidService {
     }
 
     @Override
-    public Flux<Bid> getBids(String proposalId) {
-        return bidMintDaoFactory.getBidDao().getAllBidsByProposalIdRx(proposalId);
+    public Flux<Bid> getBids(String sellerId) {
+        return bidMintDaoFactory.getBidDao().getAllBidsBySellerIdRx(sellerId);
     }
 
     @Override
     public Flux<Bid> getBids(String sellerId, String status) {
-
-        if (Objects.isNull(status))
+        if (Objects.nonNull(status))
             return bidMintDaoFactory.getBidDao().getBidsBySellerId(sellerId, status);
         else
             return bidMintDaoFactory.getBidDao().getAllBidsBySellerId(sellerId);

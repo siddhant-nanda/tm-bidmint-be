@@ -10,11 +10,11 @@ public interface IBidService {
 
     Mono<BuyerDTO> acceptBid(String bidId);
 
-    Flux<Bid> getBids(String proposalId);
+    Flux<Bid> getBids(String sellerId);
 
     Mono<BuyerDTO> createBid(Bid bid);
 
-    Mono<BuyerDTO> publishBid(String bidId, Integer amount);
+    Mono<BuyerDTO> publishBid(String bidId, Double amount);
 
     Flux<Bid> getBids(String sellerId, String status);
 

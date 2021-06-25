@@ -13,7 +13,7 @@ public interface IBidDao {
 
     List<Bid> getAllBidsByProposalId(String proposalId);
 
-    Flux<Bid> getAllBidsByProposalIdRx(String proposalId);
+    Flux<Bid> getAllBidsBySellerIdRx(String sellerId);
 
     Mono<Bid> createBidDao(Bid bid);
 

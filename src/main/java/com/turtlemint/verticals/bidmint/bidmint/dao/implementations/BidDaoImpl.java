@@ -24,10 +24,10 @@ public class BidDaoImpl extends AbstractDAOImpl<Bid> implements IBidDao {
     }
 
     @Override
-    public Flux<Bid> getAllBidsByProposalIdRx(String proposalId) {
-        if (Objects.nonNull(proposalId)) {
+    public Flux<Bid> getAllBidsBySellerIdRx(String sellerId) {
+        if (Objects.nonNull(sellerId)) {
             final Query query = new Query();
-            query.addCriteria(Criteria.where(PROPOSAL_ID).is(proposalId));
+            query.addCriteria(Criteria.where(SELLER).is(sellerId));
             return findAllRx(query, Bid.class);
         }
         return findAllRx(null, Bid.class);
@@ -58,7 +58,7 @@ public class BidDaoImpl extends AbstractDAOImpl<Bid> implements IBidDao {
     @Override
     public Flux<Bid> getBidsBySellerId(String sellerId, String status) {
         final Query query = new Query();
-        query.addCriteria(Criteria.where(ID).is(sellerId));
+        query.addCriteria(Criteria.where(SELLER_ID).is(sellerId));
         query.addCriteria(Criteria.where(STATUS).is(status));
         return findAllRx(query, Bid.class);
     }

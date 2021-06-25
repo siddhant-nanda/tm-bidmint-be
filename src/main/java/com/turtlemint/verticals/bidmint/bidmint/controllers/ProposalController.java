@@ -24,8 +24,8 @@ public class ProposalController {
     BidMintServiceFactory bidMintServiceFactory;
 
     @RequestMapping(value = "/get-proposals", method = RequestMethod.GET)
-    public Flux<ResponseEntity<Proposal>> getProposals(@Valid @RequestParam String status, @Valid @RequestParam String type,
-                                                       @Valid @RequestParam String id) {
+    public Flux<ResponseEntity<Proposal>> getProposals( @RequestParam(required = false) String status,  @RequestParam String type,
+                                                        @RequestParam(required = false) String id) {
 
         return bidMintServiceFactory.getProposalService().getProposals(status,
                 type, id).map(proposalDTO -> new ResponseEntity<>(proposalDTO, HttpStatus.OK))

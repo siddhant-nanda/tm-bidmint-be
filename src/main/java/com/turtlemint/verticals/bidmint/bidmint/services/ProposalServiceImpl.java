@@ -40,18 +40,6 @@ public class ProposalServiceImpl implements IProposalService {
             List<Bid> bids = bidMintDaoFactory.getBidDao().getAllBidsByProposalId(proposalId);
             Update update = new Update();
             update.set(NO_OF_PARTICIPANTS, bids.size());
-            Double minimum = proposal.getMinimumAmount();
-            double maximum = proposal.getBestBidScore();
-            for (Bid bid : bids) {
-                if (bid.getAmount() < minimum) {
-                    minimum = bid.getAmount();
-                }
-                if (bid.getBidStats().getBidScore() > maximum) {
-                    maximum = bid.getBidStats().getBidScore();
-                }
-            }
-            update.set(MIN_AMOUNT, minimum);
-            update.set(BID_SCORE, maximum);
             update.set("bestBid", proposalNew.getBestBid());
             update.set("avgBidAmount", proposalNew.getAvgBidAmount());
             update.set("avgAgreementOnQuestions", proposalNew.getAvgAgreementOnQuestions());
