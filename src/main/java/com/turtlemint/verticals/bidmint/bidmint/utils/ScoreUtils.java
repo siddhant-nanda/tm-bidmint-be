@@ -38,10 +38,10 @@ public class ScoreUtils {
     }
 
     public static double normalizeBidScore(List<Double> bidScores, Double currentBidScore) {
-//        zi = ((b-a)(xi – min(x)) / (max(x) – min(x)) + a)  * 100
+//        zi = ((b-a)(xi – min(x)) / (max(x) – min(x)) + a)
         double a = 60;
         double b = 100;
-        return ((b - a) * (currentBidScore - Collections.min(bidScores)) / (Collections.max(bidScores) - Collections.min(bidScores)) + a) + a;
+        return ((b - a) * (currentBidScore - Collections.min(bidScores)) / (Collections.max(bidScores) - Collections.min(bidScores)) + a) ;
     }
 
 
