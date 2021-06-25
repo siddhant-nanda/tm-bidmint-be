@@ -37,6 +37,10 @@ public abstract class AbstractDAOImpl<T> {
         return Flux.fromIterable(l);
     }
 
+    protected List<T> findOneByQuery(final Query query, final Class<T> clazz) {
+        return mongoTemplate.find(query, clazz);
+    }
+
     public Mono<T> persistRx(final T t) {
         return Mono.justOrEmpty(mongoTemplate.save(t));
     }

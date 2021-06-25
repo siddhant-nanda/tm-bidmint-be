@@ -36,6 +36,12 @@ public class SellerController {
                 HttpStatus.OK)).defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    @RequestMapping(value = "/seller-login", method = RequestMethod.GET)
+    public Mono<ResponseEntity<Seller>> loginSeller(@Valid @RequestParam String emailId) {
+
+        return bidMintServiceFactory.getSellerService().getSellerData(emailId).map(buyerDTO -> new ResponseEntity<>(buyerDTO,
+                HttpStatus.OK)).defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
 
 
 }

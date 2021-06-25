@@ -17,4 +17,6 @@ public interface ISellerDao {
     Flux<Seller> getAllSellersRx(String sellerId);
 
     List<Seller> getAllSellers(String sellerId);
+
+    Mono<Seller> getSellerByEmailRx(String emailId);
 }

@@ -54,5 +54,10 @@ public class SellerServiceImpl implements ISellerService {
         return bidMintDaoFactory.getSellerDao().getAllSellersRx(sellerId);
     }
 
+    @Override
+    public Mono<Seller> getSellerData(String emailId) {
+        return bidMintDaoFactory.getSellerDao().getSellerByEmailRx(emailId);
+    }
+
 }
 

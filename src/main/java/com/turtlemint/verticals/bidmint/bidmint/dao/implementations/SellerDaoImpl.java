@@ -50,5 +50,12 @@ public class SellerDaoImpl extends AbstractDAOImpl<Seller> implements ISellerDao
         return findAll(null, Seller.class);
     }
 
+    @Override
+    public Mono<Seller> getSellerByEmailRx(String emailId) {
+        final Query query = new Query();
+        query.addCriteria(Criteria.where("emailId").is(emailId));
+        return Mono.justOrEmpty(findOneByQuery(query, Seller.class).get(0));
+    }
+
 
 }

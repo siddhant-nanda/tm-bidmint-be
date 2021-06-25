@@ -12,4 +12,6 @@ public interface ISellerService {
 
     Flux<Seller> getSeller(String sellerId);
 
+    Mono<Seller> getSellerData(String emailId);
+
 }

@@ -82,7 +82,7 @@ public class BidServiceImpl implements IBidService {
                 bid.getProposalAnswers().get(0));
         bid.setAgreementOnQuestions(agreed);
         update.set("agreementOnQuestions", agreed);
-        if (proposal.getNumberOfParticipants() == 0 ) {
+        if (proposal.getNumberOfParticipants() == 0) {
             BidStats bidStats = new BidStats();
             bidStats.setBidScore(100.00);
             bidStats.setExcessAmount(0.00);
@@ -240,11 +240,11 @@ public class BidServiceImpl implements IBidService {
         for (Bid bid : allBids) {
             if (!BidMintEnums.DRAFT.equals(bid.getStatus())) {
                 Double key = bid.getBidStats().getBidScore();
-                if (!map.containsKey(key)){
+                if (!map.containsKey(key)) {
                     List<String> sameScoreBids = new ArrayList<>();
                     sameScoreBids.add(bid.getId());
-                    map.put(key,sameScoreBids);
-                }else{
+                    map.put(key, sameScoreBids);
+                } else {
                     List<String> existingBids = map.get(key);
                     existingBids.add(bid.getId());
                     map.put(key, existingBids);
@@ -256,7 +256,7 @@ public class BidServiceImpl implements IBidService {
         while (n > 0 && it.hasNext()) {
             Map.Entry<Integer, List<String>> entry = (Map.Entry<Integer, List<String>>) it.next();
             List<String> presentBids = entry.getValue();
-            for(String b: presentBids){
+            for (String b : presentBids) {
                 topNBids.add(bidMintDaoFactory.getBidDao().findById(b));
                 n--;
             }

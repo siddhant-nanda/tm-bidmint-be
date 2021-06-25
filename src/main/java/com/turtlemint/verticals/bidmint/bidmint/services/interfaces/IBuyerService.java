@@ -15,4 +15,6 @@ public interface IBuyerService {
     Mono<BuyerDTO> createProposal(Proposal proposal);
 
     Mono<BuyerDTO> publishProposal(String proposalId, Long turnAroundTime);
+
+    Mono<Buyer> getBuyerData(String emailId);
 }

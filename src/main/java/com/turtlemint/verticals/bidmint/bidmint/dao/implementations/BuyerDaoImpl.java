@@ -40,4 +40,10 @@ public class BuyerDaoImpl extends AbstractDAOImpl<Buyer> implements IBuyerDao {
         return findAllRx(null, Buyer.class);
     }
 
+    @Override
+    public Mono<Buyer> getBuyerByEmailRx(String emailId) {
+        final Query query = new Query();
+        query.addCriteria(Criteria.where("emailId").is(emailId));
+        return Mono.justOrEmpty(findOneByQuery(query, Buyer.class).get(0));
+    }
 }

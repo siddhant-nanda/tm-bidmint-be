@@ -16,4 +16,6 @@ public interface IBuyerDao {
     Flux<Buyer> getAllBuyersRx(String buyerId);
 
     Mono<Proposal> createProposalDao(Proposal proposal);
+
+    Mono<Buyer> getBuyerByEmailRx(String emailId);
 }
