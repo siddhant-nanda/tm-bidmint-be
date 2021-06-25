@@ -258,6 +258,8 @@ public class BidServiceImpl implements IBidService {
                 bidOne.setStatus(BidMintEnums.PARTIAL);
             }
             mergeBidStats(bidOne, bidTwo);
+            Proposal proposal = bidMintDaoFactory.getProposalDao().findById(bidOne.getProposalId());
+            getBestBidAndUpdateOtherBids(proposal, bidOne);
             bidMintDaoFactory.getBidDao().save(bidOne);
             bidMintDaoFactory.getBidDao().save(bidTwo);
             bidDTO.setMessage("Merge Successful");
