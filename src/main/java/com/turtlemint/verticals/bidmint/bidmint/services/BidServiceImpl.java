@@ -118,17 +118,15 @@ public class BidServiceImpl implements IBidService {
             proposal.setBestBid(bid);
             proposal.setAvgBidAmount(proposal.getAvgBidAmount() + bid.getAmount() / 2);
             proposal.setAvgAgreementOnQuestions(proposal.getAvgAgreementOnQuestions() + bid.getAgreementOnQuestions() / 2);
-
-            // as best bid is changed recalculate other bids score
-            reCalculateOtherBidsScore(bid, proposal);
         }
+        reCalculateOtherBidsScore(bid, proposal);
 
     }
 
-    public void reCalculateOtherBidsScore(Bid bestBid, Proposal proposal) {
+    public void reCalculateOtherBidsScore(Bid currentBid, Proposal proposal) {
         List<Bid> allBids = bidMintDaoFactory.getBidDao().getAllBidsByProposalId(proposal.getId());
         for (Bid bid : allBids) {
-                bid.getBidStats().setBidScore(ScoreUtils.calculateBidScoreWRTCurrentBid(bid, bestBid));
+                bid.getBidStats().setBidScore(ScoreUtils.calculateBidScoreWRTCurrentBid(bid, currentBid));
                 ScoreUtils.calculateBidStats(bid, proposal);
                 bidMintDaoFactory.getBidDao().save(bid);
             }

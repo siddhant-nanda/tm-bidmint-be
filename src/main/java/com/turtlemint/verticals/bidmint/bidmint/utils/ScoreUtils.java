@@ -32,7 +32,7 @@ public class ScoreUtils {
         A+B =  A = if agreement increases more score should be deducted
                B = if amount increases more score should be deducted
          */
-        return (scoreFactor * -(fractionAgreement)) + ((1 - scoreFactor) * (-fractionAmount));
+        return (scoreFactor * (fractionAgreement)) + ((1 - scoreFactor) * (fractionAmount));
 
     }
 
