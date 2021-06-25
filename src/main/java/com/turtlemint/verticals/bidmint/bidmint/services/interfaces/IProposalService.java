@@ -10,7 +10,7 @@ public interface IProposalService {
 
     Flux<Proposal> getProposals(String status, String type, String id);
 
-    Boolean updateProposalDetails(String proposalId);
+    Boolean updateProposalDetails(String proposalId, Proposal proposal);
 
     Mono<ProposalDTO> getProposalDetails(String proposalId);
 }

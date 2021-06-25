@@ -2,11 +2,13 @@ package com.turtlemint.verticals.bidmint.bidmint.services;
 
 import com.turtlemint.verticals.bidmint.bidmint.dao.*;
 import com.turtlemint.verticals.bidmint.bidmint.dto.BidDTO;
+import com.turtlemint.verticals.bidmint.bidmint.dto.BidStats;
 import com.turtlemint.verticals.bidmint.bidmint.dto.BuyerDTO;
 import com.turtlemint.verticals.bidmint.bidmint.enums.BidMintEnums;
 import com.turtlemint.verticals.bidmint.bidmint.services.interfaces.IBidService;
 import com.turtlemint.verticals.bidmint.bidmint.services.interfaces.IProposalService;
 import com.turtlemint.verticals.bidmint.bidmint.utils.NotificationServiceProvider;
+import com.turtlemint.verticals.bidmint.bidmint.utils.ScoreUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.http.HttpStatus;
@@ -63,16 +65,28 @@ public class BidServiceImpl implements IBidService {
         update.set(PUBLISHED_AT, Instant.now().getEpochSecond());
         update.set(AMOUNT, amount);
         update.set(STATUS, BidMintEnums.ACTIVE);
+        Bid bid = bidMintDaoFactory.getBidDao().findById(bidId);
+        Proposal proposal = bidMintDaoFactory.getProposalDao().findById(bid.getProposalId());
+        if (proposal.getNumberOfParticipants() == 0) {
+            BidStats bidStats = new BidStats();
+            bidStats.setBidScore(100.00);
+            bidStats.setRunningBids(1);
+            bidStats.setExcessAmount(0.00);
+            Integer agreed = ScoreUtils.computeAgreementOnQuestions(proposal.getProposalQuestions().get(0),
+                    bid.getProposalAnswers().get(0));
+            bid.setAgreementOnQuestions(agreed);
+            bidStats.setAgreementOnQuestions(agreed);
+            update.set("bidStats", bidStats);
+            //This is proposal best bid
+            proposal.setBestBid(bid);
+        } else {
+            getBestBidAndUpdateOtherBids(proposal, bid);
+        }
+
         return bidMintDaoFactory.getBidDao().updateBidById(bidId, update).flatMap(
                 updateResult -> {
-                    NotificationTemplate notificationTemplate = new NotificationTemplate();
-                    List<String> toEmailList = new ArrayList<>();
-                    Bid bid = bidMintDaoFactory.getBidDao().findById(bidId);
-                    Buyer buyer = bidMintDaoFactory.getBuyerDao().findById(bid.getBuyerId());
-                    toEmailList.add(buyer.getEmailId());
-                    notificationTemplate.setToEmail(toEmailList);
-                    if (NotificationServiceProvider.sendNotification(notificationTemplate, "Bid")
-                            && proposalService.updateProposalDetails(bid.getProposalId())) {
+                    if (NotificationServiceProvider.sendNotification(getNsTemplateForBuyer(bid), "Bid")
+                            && proposalService.updateProposalDetails(bid.getProposalId(), proposal)) {
                         buyerDTO.setStatusCode(HttpStatus.OK.value());
                         buyerDTO.setMessage("Bid is Published and Notification is Triggered");
                         return Mono.just(buyerDTO);
@@ -88,6 +102,41 @@ public class BidServiceImpl implements IBidService {
         });
     }
 
+    public void getBestBidAndUpdateOtherBids(Proposal proposal, Bid bid) {
+        Bid bestBid = proposal.getBestBid();
+        double score = ScoreUtils.calculateBidScore(bid, bestBid);
+        if (score > bestBid.getBidStats().getBidScore()) {
+            // update proposal
+            bid.getBidStats().setBidScore(score);
+            ScoreUtils.calculateBidStats(bid, proposal);
+            proposal.setBestBid(bid);
+            proposal.setAvgBidAmount(proposal.getAvgBidAmount() + bid.getAmount() / 2);
+            proposal.setAvgAgreementOnQuestions(proposal.getAvgAgreementOnQuestions() + bid.getAgreementOnQuestions() / 2);
+
+            // as best bid is changed recalculate other bids score
+            reCalculateOtherBidsScore(bid, proposal);
+        }
+    }
+
+    public void reCalculateOtherBidsScore(Bid bestBid, Proposal proposal) {
+        List<Bid> allBids = bidMintDaoFactory.getBidDao().getAllBidsByProposalId(proposal.getId());
+        for (Bid bid : allBids) {
+            if (!bid.getId().equals(bestBid.getId())) {
+                bid.getBidStats().setBidScore(ScoreUtils.calculateBidScore(bid, bestBid));
+                ScoreUtils.calculateBidStats(bid, proposal);
+                bidMintDaoFactory.getBidDao().save(bid);
+            }
+        }
+    }
+
+    private NotificationTemplate getNsTemplateForBuyer(Bid bid) {
+        NotificationTemplate notificationTemplate = new NotificationTemplate();
+        List<String> toEmailList = new ArrayList<>();
+        Buyer buyer = bidMintDaoFactory.getBuyerDao().findById(bid.getBuyerId());
+        toEmailList.add(buyer.getEmailId());
+        notificationTemplate.setToEmail(toEmailList);
+        return notificationTemplate;
+    }
 
     @Override
     public Mono<BuyerDTO> acceptBid(String bidId) {

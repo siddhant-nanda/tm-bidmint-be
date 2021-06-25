@@ -18,5 +18,7 @@ public interface IProposalDao {
 
     Proposal findById(String id);
 
+    void save(Proposal proposal);
+
 
 }

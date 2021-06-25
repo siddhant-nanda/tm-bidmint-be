@@ -53,6 +53,11 @@ public class ProposalDaoImpl extends AbstractDAOImpl<Proposal> implements IPropo
         return findById(id, Proposal.class);
     }
 
+    @Override
+    public void save(Proposal proposal) {
+        persistRx(proposal);
+    }
+
 
     @Override
     public Flux<Proposal> getAllProposals(String proposalId) {

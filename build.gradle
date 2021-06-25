@@ -27,7 +27,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
     	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
     	compile group: 'org.projectreactor', name: 'reactor-spring', version: '1.0.0.RELEASE'
     	compile group: 'io.projectreactor', name: 'reactor-test', version: '3.2.3.RELEASE'

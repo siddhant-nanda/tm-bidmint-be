@@ -2,6 +2,7 @@ package com.turtlemint.verticals.bidmint.bidmint.dao;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.turtlemint.verticals.bidmint.bidmint.dto.BidStats;
 import com.turtlemint.verticals.bidmint.bidmint.enums.BidMintEnums;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -21,11 +22,12 @@ public class Bid {
     String proposalId;
     String sellerId;
     String buyerId;
-    Long amount;
+    Double amount;
     List<Map<String, Object>> proposalAnswers;
     Long createdAt;
     Long updatedAt;
     Long publishedAt;
     BidMintEnums status;
-    Double bidScore;
+    BidStats bidStats;
+    Integer agreementOnQuestions;
 }

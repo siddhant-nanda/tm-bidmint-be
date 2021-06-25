@@ -34,24 +34,27 @@ public class ProposalServiceImpl implements IProposalService {
     }
 
     @Override
-    public Boolean updateProposalDetails(String proposalId) {
+    public Boolean updateProposalDetails(String proposalId, Proposal proposalNew) {
         try {
             Proposal proposal = bidMintDaoFactory.getProposalDao().findById(proposalId);
             List<Bid> bids = bidMintDaoFactory.getBidDao().getAllBidsByProposalId(proposalId);
             Update update = new Update();
             update.set(NO_OF_PARTICIPANTS, bids.size());
-            long minimum = proposal.getMinimumAmount();
+            Double minimum = proposal.getMinimumAmount();
             double maximum = proposal.getBestBidScore();
             for (Bid bid : bids) {
                 if (bid.getAmount() < minimum) {
                     minimum = bid.getAmount();
                 }
-                if (bid.getBidScore() > maximum) {
-                    maximum = bid.getBidScore();
+                if (bid.getBidStats().getBidScore() > maximum) {
+                    maximum = bid.getBidStats().getBidScore();
                 }
             }
             update.set(MIN_AMOUNT, minimum);
             update.set(BID_SCORE, maximum);
+            update.set("bestBid", proposalNew.getBestBid());
+            update.set("avgBidAmount", proposalNew.getAvgBidAmount());
+            update.set("avgAgreementOnQuestions", proposalNew.getAvgAgreementOnQuestions());
             bidMintDaoFactory.getProposalDao().updateProposalById(proposalId, update);
             return true;
         } catch (Exception exception) {

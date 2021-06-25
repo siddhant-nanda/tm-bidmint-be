@@ -28,5 +28,4 @@ public class BidMintConstants {
 
     public static final String BID_SCORE = "bestBidScore";
 
-
 }

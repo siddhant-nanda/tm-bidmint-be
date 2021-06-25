@@ -23,4 +23,7 @@ public interface IBidDao {
 
     Flux<Bid> getAllBidsBySellerId(String sellerId);
 
+    void save(Bid bid);
+
+
 }

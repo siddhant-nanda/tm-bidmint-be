@@ -69,4 +69,9 @@ public class BidDaoImpl extends AbstractDAOImpl<Bid> implements IBidDao {
         query.addCriteria(Criteria.where(ID).is(sellerId));
         return findAllRx(query, Bid.class);
     }
+
+    @Override
+    public void save(Bid bid) {
+        persistRx(bid);
+    }
 }
