@@ -4,6 +4,7 @@ import com.turtlemint.verticals.bidmint.bidmint.dao.Bid;
 import com.turtlemint.verticals.bidmint.bidmint.dao.Proposal;
 import com.turtlemint.verticals.bidmint.bidmint.dto.BidStats;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +35,11 @@ public class ScoreUtils {
          */
         return (scoreFactor * (fractionAgreement)) + ((1 - scoreFactor) * (fractionAmount));
 
+    }
+
+    public static double normalizeBidScore(List<Double> bidScores, Double currentBidScore){
+//        zi = (xi – min(x)) / (max(x) – min(x)) * 100
+        return (currentBidScore - Collections.min(bidScores)) / (Collections.max(bidScores) - Collections.min(bidScores)) * 100;
     }
 
 

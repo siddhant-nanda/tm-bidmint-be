@@ -129,11 +129,34 @@ public class BidServiceImpl implements IBidService {
 
     public void reCalculateOtherBidsScore(Bid currentBid, Proposal proposal) {
         List<Bid> allBids = bidMintDaoFactory.getBidDao().getAllBidsByProposalId(proposal.getId());
+        List<Double> bidScores = new ArrayList<>();
+        // check for same score/input check
         for (Bid bid : allBids) {
-                bid.getBidStats().setBidScore(ScoreUtils.calculateBidScoreWRTCurrentBid(bid, currentBid));
-                ScoreUtils.calculateBidStats(bid, proposal);
-                bidMintDaoFactory.getBidDao().save(bid);
+            if(bid.getId().equals(currentBid.getId()))
+                bid = currentBid;
+            double score = ScoreUtils.calculateBidScoreWRTCurrentBid(bid, currentBid);
+            bidScores.add(score);
+            BidStats bidStats = new BidStats();
+            if (Objects.nonNull(bid.getBidStats()))
+                bid.getBidStats().setBidScore(score);
+            else{
+                bidStats.setBidScore(score);
+                bid.setBidStats(bidStats);
             }
+            ScoreUtils.calculateBidStats(bid, proposal);
+            if(bid.getId().equals(currentBid.getId()))
+                currentBid = bid;
+            }
+
+        for (Bid bid : allBids) {
+            if(bid.getId().equals(currentBid.getId()))
+                bid = currentBid;
+            Double currentBidScore = bid.getBidStats().getBidScore();
+            double normalizedScore = ScoreUtils.normalizeBidScore(bidScores,currentBidScore );
+            bid.getBidStats().setBidScore(normalizedScore);
+            bidMintDaoFactory.getBidDao().save(bid);
+        }
+
         }
 
     private NotificationTemplate getNsTemplateForBuyer(Bid bid) {
