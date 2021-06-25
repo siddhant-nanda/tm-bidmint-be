@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import javax.validation.Valid;
-
 @Slf4j
 @RestController
 @CrossOrigin(allowedHeaders = "*", origins = "*")
@@ -24,8 +22,8 @@ public class ProposalController {
     BidMintServiceFactory bidMintServiceFactory;
 
     @RequestMapping(value = "/get-proposals", method = RequestMethod.GET)
-    public Flux<ResponseEntity<Proposal>> getProposals( @RequestParam(required = false) String status,  @RequestParam String type,
-                                                        @RequestParam(required = false) String id) {
+    public Flux<ResponseEntity<Proposal>> getProposals(@RequestParam(required = false) String status, @RequestParam String type,
+                                                       @RequestParam(required = false) String id) {
 
         return bidMintServiceFactory.getProposalService().getProposals(status,
                 type, id).map(proposalDTO -> new ResponseEntity<>(proposalDTO, HttpStatus.OK))

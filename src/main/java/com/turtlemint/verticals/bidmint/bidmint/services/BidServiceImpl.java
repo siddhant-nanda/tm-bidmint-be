@@ -86,6 +86,8 @@ public class BidServiceImpl implements IBidService {
             //This is proposal best bid
             bid.setBidStats(bidStats);
             proposal.setBestBid(bid);
+            proposal.setAvgAgreementOnQuestions(bid.getAgreementOnQuestions());
+            proposal.setAvgBidAmount(bid.getAmount());
         } else {
             getBestBidAndUpdateOtherBids(proposal, bid);
         }
@@ -112,10 +114,10 @@ public class BidServiceImpl implements IBidService {
     public void getBestBidAndUpdateOtherBids(Proposal proposal, Bid bid) {
         Bid bestBid = proposal.getBestBid();
         double score = ScoreUtils.calculateBidScore(bid, bestBid);
+        ScoreUtils.calculateBidStats(bid, proposal);
+        bid.getBidStats().setBidScore(score);
         if (score > bestBid.getBidStats().getBidScore()) {
             // update proposal
-            bid.getBidStats().setBidScore(score);
-            ScoreUtils.calculateBidStats(bid, proposal);
             proposal.setBestBid(bid);
             proposal.setAvgBidAmount(proposal.getAvgBidAmount() + bid.getAmount() / 2);
             proposal.setAvgAgreementOnQuestions(proposal.getAvgAgreementOnQuestions() + bid.getAgreementOnQuestions() / 2);
@@ -123,6 +125,7 @@ public class BidServiceImpl implements IBidService {
             // as best bid is changed recalculate other bids score
             reCalculateOtherBidsScore(bid, proposal);
         }
+
     }
 
     public void reCalculateOtherBidsScore(Bid bestBid, Proposal proposal) {
@@ -199,6 +202,11 @@ public class BidServiceImpl implements IBidService {
         bidDTO.setStatusCode(HttpStatus.OK.value());
         bidDTO.setMessage("SUCCESS");
         return Mono.just(bidDTO);
+    }
+
+    @Override
+    public Flux<Bid> getBidsByProposalId(String proposalId) {
+        return bidMintDaoFactory.getBidDao().getAllBidsByProposalIdRx(proposalId);
     }
 
 }

@@ -3,6 +3,7 @@ package com.turtlemint.verticals.bidmint.bidmint.dao.implementations;
 import com.mongodb.client.result.UpdateResult;
 import com.turtlemint.verticals.bidmint.bidmint.dao.Bid;
 import com.turtlemint.verticals.bidmint.bidmint.dao.interfaces.IBidDao;
+import com.turtlemint.verticals.bidmint.bidmint.enums.BidMintEnums;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -27,10 +28,18 @@ public class BidDaoImpl extends AbstractDAOImpl<Bid> implements IBidDao {
     public Flux<Bid> getAllBidsBySellerIdRx(String sellerId) {
         if (Objects.nonNull(sellerId)) {
             final Query query = new Query();
-            query.addCriteria(Criteria.where(SELLER).is(sellerId));
+            query.addCriteria(Criteria.where(SELLER_ID).is(sellerId));
             return findAllRx(query, Bid.class);
         }
         return findAllRx(null, Bid.class);
+    }
+
+    @Override
+    public Flux<Bid> getAllBidsByProposalIdRx(String proposalId) {
+        final Query query = new Query();
+        query.addCriteria(Criteria.where(PROPOSAL_ID).is(proposalId));
+        query.addCriteria(Criteria.where(STATUS).is(BidMintEnums.ACTIVE));
+        return findAllRx(query, Bid.class);
     }
 
     @Override

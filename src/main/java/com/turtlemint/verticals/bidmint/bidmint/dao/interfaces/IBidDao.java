@@ -15,6 +15,8 @@ public interface IBidDao {
 
     Flux<Bid> getAllBidsBySellerIdRx(String sellerId);
 
+    Flux<Bid> getAllBidsByProposalIdRx(String proposalId);
+
     Mono<Bid> createBidDao(Bid bid);
 
     Mono<UpdateResult> updateBidById(String bidId, Update update);

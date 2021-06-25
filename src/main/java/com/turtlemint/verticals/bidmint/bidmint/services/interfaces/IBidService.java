@@ -20,4 +20,6 @@ public interface IBidService {
 
     Mono<BidDTO> getBidDetails(String bidId);
 
+    Flux<Bid> getBidsByProposalId(String proposalId);
+
 }

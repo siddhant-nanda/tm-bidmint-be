@@ -36,8 +36,7 @@ public class ProposalDaoImpl extends AbstractDAOImpl<Proposal> implements IPropo
         }
         if (!BidMintEnums.DRAFT.getStatus().equalsIgnoreCase(status)) {
             query.addCriteria(Criteria.where(STATUS).is(status));
-        }
-        else {
+        } else {
             query.addCriteria(Criteria.where(STATUS).ne(BidMintEnums.DRAFT));
         }
         return findByQuery(query, Proposal.class);
