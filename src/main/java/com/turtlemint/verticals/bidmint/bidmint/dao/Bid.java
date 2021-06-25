@@ -8,6 +8,7 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -30,4 +31,8 @@ public class Bid {
     BidMintEnums status;
     BidStats bidStats;
     Integer agreementOnQuestions;
+    Integer percent;
+    Boolean isMerged=false;
+    List<String> mergeList = new ArrayList<>();
+    String mergeId;
 }

@@ -38,8 +38,9 @@ public class BidController {
 
     @RequestMapping(value = "/publish-bid", method = RequestMethod.POST)
     public Mono<ResponseEntity<BuyerDTO>> publishBid(@RequestParam String bidId,
-                                                     @RequestParam Double amount) {
-        return bidMintServiceFactory.getBidService().publishBid(bidId, amount).map(bid -> new ResponseEntity<>(bid, HttpStatus.OK))
+                                                     @RequestParam Double amount,
+                                                     @RequestParam Double percent) {
+        return bidMintServiceFactory.getBidService().publishBid(bidId, amount, percent).map(bid -> new ResponseEntity<>(bid, HttpStatus.OK))
                 .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
@@ -68,6 +69,12 @@ public class BidController {
     @RequestMapping(value = "/get-bid-info", method = RequestMethod.GET)
     public Mono<ResponseEntity<BidDTO>> publishProposal(@RequestParam String bidId) {
         return bidMintServiceFactory.getBidService().getBidDetails(bidId).map(proposalDTO -> new ResponseEntity<>(proposalDTO, HttpStatus.OK))
+                .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @RequestMapping(value = "/merge-bid", method = RequestMethod.POST)
+    public Mono<ResponseEntity<BidDTO>> publishProposal(@RequestParam String bidOneId, @RequestParam String bidTwoId) {
+        return bidMintServiceFactory.getBidService().mergeBids(bidOneId, bidTwoId).map(proposalDTO -> new ResponseEntity<>(proposalDTO, HttpStatus.OK))
                 .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }
