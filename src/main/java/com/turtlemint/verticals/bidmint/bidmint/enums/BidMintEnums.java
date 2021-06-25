@@ -4,7 +4,9 @@ public enum BidMintEnums {
     DRAFT("draft"),
     PENDING("pending"),
     ACTIVE("active"),
-    ACCEPTED("accepted");
+    ACCEPTED("accepted"),
+    PARTIAL("partial"),
+    MERGED("merged");
 
     private final String status;
 

@@ -62,13 +62,17 @@ public class BidServiceImpl implements IBidService {
     }
 
     @Override
-    public Mono<BuyerDTO> publishBid(String bidId, Double amount) {
+    public Mono<BuyerDTO> publishBid(String bidId, Double amount, Double percent) {
         BuyerDTO buyerDTO = new BuyerDTO();
         Update update = new Update();
         update.set(PUBLISHED_AT, Instant.now().getEpochSecond());
         update.set(AMOUNT, amount);
-        update.set(STATUS, BidMintEnums.ACTIVE);
         Bid bid = bidMintDaoFactory.getBidDao().findById(bidId);
+        update.set("percent", percent);
+        update.set(STATUS, BidMintEnums.ACTIVE);
+        if (percent < 100){
+            update.set(STATUS, BidMintEnums.PARTIAL);
+        }
         Proposal proposal = bidMintDaoFactory.getProposalDao().findById(bid.getProposalId());
         bid.setAmount(amount);
         bid.setPublishedAt(Instant.now().getEpochSecond());
@@ -206,6 +210,58 @@ public class BidServiceImpl implements IBidService {
     @Override
     public Flux<Bid> getBidsByProposalId(String proposalId) {
         return bidMintDaoFactory.getBidDao().getAllBidsByProposalIdRx(proposalId);
+    }
+
+    @Override
+    public Mono<BidDTO> mergeBids(String bidIdOne, String bidIdTwo){
+        try {
+            BidDTO bidDTO = new BidDTO();
+            Bid bidOne = bidMintDaoFactory.getBidDao().findById(bidIdOne);
+            Bid bidTwo = bidMintDaoFactory.getBidDao().findById(bidIdTwo);
+            Integer mergePercent = bidOne.getPercent() + bidTwo.getPercent();
+            if (mergePercent>100){
+                bidDTO.setMessage("Percent is more than 100. Please recreate a new bid.");
+                bidDTO.setStatusCode(HttpStatus.BAD_REQUEST.value());
+                return Mono.just(bidDTO);
+            }
+            bidOne.setPercent(mergePercent);
+            bidOne.setAmount(bidOne.getAmount() + bidTwo.getAmount());
+            if (bidTwo.getIsMerged()) {
+                for (String merge : bidTwo.getMergeList()) {
+                    bidOne.getMergeList().add(merge);
+                }
+            }
+            bidOne.getMergeList().add(bidIdTwo);
+            bidOne.setIsMerged(true);
+            bidTwo.setIsMerged(true);
+            bidTwo.setStatus(BidMintEnums.MERGED);
+            bidTwo.setMergeId(bidIdOne);
+            bidOne.setStatus(BidMintEnums.ACTIVE);
+            if (bidOne.getPercent() < 100) {
+                bidOne.setStatus(BidMintEnums.PARTIAL);
+            }
+            mergeBidStats(bidOne, bidTwo);
+            bidMintDaoFactory.getBidDao().save(bidOne);
+            bidMintDaoFactory.getBidDao().save(bidTwo);
+            bidDTO.setMessage("Merge Successful");
+            bidDTO.setStatusCode(HttpStatus.ACCEPTED.value());
+            return Mono.just(bidDTO);
+        }
+        catch (Exception exception) {
+            BidDTO bidDTO = new BidDTO();
+            bidDTO.setMessage("Merge failure");
+            bidDTO.setStatusCode(HttpStatus.ACCEPTED.value());
+            return Mono.just(bidDTO);
+        }
+    }
+
+    public void mergeBidStats(Bid bidOne, Bid bidTwo){
+        BidStats bidOneStats = bidOne.getBidStats();
+        BidStats bidTwoStats = bidTwo.getBidStats();
+        Double score = (bidOneStats.getBidScore()*bidOne.getPercent() +
+                bidTwoStats.getBidScore()*bidTwo.getPercent()) / 100;
+        bidOneStats.setBidScore(score);
+        bidOne.setBidStats(bidOneStats);
     }
 
 }

@@ -14,12 +14,14 @@ public interface IBidService {
 
     Mono<BuyerDTO> createBid(Bid bid);
 
-    Mono<BuyerDTO> publishBid(String bidId, Double amount);
+    Mono<BuyerDTO> publishBid(String bidId, Double amount, Double percent);
 
     Flux<Bid> getBids(String sellerId, String status);
 
     Mono<BidDTO> getBidDetails(String bidId);
 
     Flux<Bid> getBidsByProposalId(String proposalId);
+
+    Mono<BidDTO> mergeBids(String bidIdOne, String bidIdTwo);
 
 }
