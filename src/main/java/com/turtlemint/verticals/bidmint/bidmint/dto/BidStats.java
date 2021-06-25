@@ -12,9 +12,6 @@ public class BidStats {
     // Avg questions on which there is agreement from all bidders
     Integer agreementOnQuestions;
 
-    // No of bids already on this proposal
-    Integer runningBids;
-
     Double bidScore;
 
 }

@@ -4,12 +4,16 @@ import com.turtlemint.verticals.bidmint.bidmint.dao.Bid;
 import com.turtlemint.verticals.bidmint.bidmint.dao.Proposal;
 import com.turtlemint.verticals.bidmint.bidmint.dto.BidStats;
 
+import java.util.List;
 import java.util.Map;
 
 public class ScoreUtils {
 
     public static void calculateBidStats(Bid currentBid, Proposal proposal) {
         BidStats bidStats = new BidStats();
+        if (currentBid.getBidStats()!=null){
+            bidStats = currentBid.getBidStats();
+        }
         Double excessAmt = proposal.getAvgBidAmount() - currentBid.getAmount();
         bidStats.setExcessAmount(excessAmt);
         Integer agreed = proposal.getAvgAgreementOnQuestions() - currentBid.getAgreementOnQuestions();
@@ -20,10 +24,9 @@ public class ScoreUtils {
     public static double calculateBidScore(Bid currentBid, Bid bestBid) {
 
         double scoreFactor = 0.9;
-        int percentAmount = (currentBid.getAmount().intValue() * 100) / bestBid.getAmount().intValue();
+        int percentAmount = (bestBid.getAmount().intValue() * 100) / currentBid.getAmount().intValue();
         int percentAgreement = (currentBid.getAgreementOnQuestions() * 100) / bestBid.getAgreementOnQuestions();
-
-        return (scoreFactor * percentAgreement) + ((1 - scoreFactor) * percentAmount);
+        return ((scoreFactor) * percentAgreement) + ((1 - scoreFactor) * percentAmount);
 
     }
 

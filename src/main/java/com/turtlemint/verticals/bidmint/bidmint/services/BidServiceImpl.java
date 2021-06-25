@@ -76,13 +76,12 @@ public class BidServiceImpl implements IBidService {
         Integer agreed = ScoreUtils.computeAgreementOnQuestions(proposal.getProposalQuestions().get(0),
                 bid.getProposalAnswers().get(0));
         bid.setAgreementOnQuestions(agreed);
+        update.set("agreementOnQuestions", agreed);
         if (proposal.getNumberOfParticipants() == 0) {
             BidStats bidStats = new BidStats();
             bidStats.setBidScore(100.00);
-            bidStats.setRunningBids(1);
             bidStats.setExcessAmount(0.00);
             bidStats.setAgreementOnQuestions(agreed);
-            update.set("bidStats", bidStats);
             //This is proposal best bid
             bid.setBidStats(bidStats);
             proposal.setBestBid(bid);
@@ -91,7 +90,7 @@ public class BidServiceImpl implements IBidService {
         } else {
             getBestBidAndUpdateOtherBids(proposal, bid);
         }
-
+        update.set("bidStats", bid.getBidStats());
         return bidMintDaoFactory.getBidDao().updateBidById(bidId, update).flatMap(
                 updateResult -> {
                     if (notificationServiceProvider.sendNotification(getNsTemplateForBuyer(bid), "Bid")

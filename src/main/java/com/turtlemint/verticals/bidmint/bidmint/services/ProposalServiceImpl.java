@@ -36,7 +36,6 @@ public class ProposalServiceImpl implements IProposalService {
     @Override
     public Boolean updateProposalDetails(String proposalId, Proposal proposalNew) {
         try {
-            Proposal proposal = bidMintDaoFactory.getProposalDao().findById(proposalId);
             List<Bid> bids = bidMintDaoFactory.getBidDao().getAllBidsByProposalId(proposalId);
             Update update = new Update();
             update.set(NO_OF_PARTICIPANTS, bids.size());
