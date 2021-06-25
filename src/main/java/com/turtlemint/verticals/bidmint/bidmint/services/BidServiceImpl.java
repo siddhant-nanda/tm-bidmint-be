@@ -112,10 +112,8 @@ public class BidServiceImpl implements IBidService {
 
     public void getBestBidAndUpdateOtherBids(Proposal proposal, Bid bid) {
         Bid bestBid = proposal.getBestBid();
-        double score = ScoreUtils.calculateBidScore(bid, bestBid);
-        ScoreUtils.calculateBidStats(bid, proposal);
-        bid.getBidStats().setBidScore(score);
-        if (score > bestBid.getBidStats().getBidScore()) {
+        double score = ScoreUtils.calculateBidScoreWRTCurrentBid(bid, bestBid);
+        if (score < bestBid.getBidStats().getBidScore()) {
             // update proposal
             proposal.setBestBid(bid);
             proposal.setAvgBidAmount(proposal.getAvgBidAmount() + bid.getAmount() / 2);
@@ -130,13 +128,11 @@ public class BidServiceImpl implements IBidService {
     public void reCalculateOtherBidsScore(Bid bestBid, Proposal proposal) {
         List<Bid> allBids = bidMintDaoFactory.getBidDao().getAllBidsByProposalId(proposal.getId());
         for (Bid bid : allBids) {
-            if (!bid.getId().equals(bestBid.getId())) {
-                bid.getBidStats().setBidScore(ScoreUtils.calculateBidScore(bid, bestBid));
+                bid.getBidStats().setBidScore(ScoreUtils.calculateBidScoreWRTCurrentBid(bid, bestBid));
                 ScoreUtils.calculateBidStats(bid, proposal);
                 bidMintDaoFactory.getBidDao().save(bid);
             }
         }
-    }
 
     private NotificationTemplate getNsTemplateForBuyer(Bid bid) {
         NotificationTemplate notificationTemplate = new NotificationTemplate();

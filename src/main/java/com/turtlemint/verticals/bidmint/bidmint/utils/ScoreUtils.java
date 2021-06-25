@@ -21,12 +21,18 @@ public class ScoreUtils {
         currentBid.setBidStats(bidStats);
     }
 
-    public static double calculateBidScore(Bid currentBid, Bid bestBid) {
+    // calculate bid score with respect to current bid
+    public static double calculateBidScoreWRTCurrentBid(Bid currentBid, Bid bestBid) {
 
         double scoreFactor = 0.9;
-        int percentAmount = (bestBid.getAmount().intValue() * 100) / currentBid.getAmount().intValue();
-        int percentAgreement = (currentBid.getAgreementOnQuestions() * 100) / bestBid.getAgreementOnQuestions();
-        return ((scoreFactor) * percentAgreement) + ((1 - scoreFactor) * percentAmount);
+        double fractionAmount = (100 / currentBid.getAmount()) * bestBid.getAmount();
+        double fractionAgreement = (100 / currentBid.getAgreementOnQuestions()) * bestBid.getAgreementOnQuestions();
+
+        /*
+        A+B =  A = if agreement increases more score should be deducted
+               B = if amount increases more score should be deducted
+         */
+        return (scoreFactor * -(fractionAgreement)) + ((1 - scoreFactor) * (-fractionAmount));
 
     }
 
