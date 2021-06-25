@@ -22,8 +22,8 @@ public class ScoreUtils {
         currentBid.setBidStats(bidStats);
     }
 
-    // calculate bid score with respect to current bid
-    public static double calculateBidScoreWRTCurrentBid(Bid currentBid, Bid bestBid) {
+    // calculate bid score with respect to best bid
+    public static double calculateBidScoreWRTBestBid(Bid currentBid, Bid bestBid) {
 
         double scoreFactor = 0.9;
         double fractionAmount = (100 / currentBid.getAmount()) * bestBid.getAmount();
@@ -33,7 +33,7 @@ public class ScoreUtils {
         A+B =  A = if agreement increases more score should be deducted
                B = if amount increases more score should be deducted
          */
-        return (scoreFactor * (fractionAgreement)) + ((1 - scoreFactor) * (fractionAmount));
+        return (scoreFactor * fractionAgreement) + ((1 - scoreFactor) * fractionAmount);
 
     }
 
@@ -41,7 +41,7 @@ public class ScoreUtils {
 //        zi = ((b-a)(xi – min(x)) / (max(x) – min(x)) + a)  * 100
         double a = 60;
         double b = 100;
-        return ((b - a) * (currentBidScore - Collections.min(bidScores)) / (Collections.max(bidScores) - Collections.min(bidScores)) + a) * 100;
+        return ((b - a) * (currentBidScore - Collections.min(bidScores)) / (Collections.max(bidScores) - Collections.min(bidScores)) + a) + a;
     }
 
 

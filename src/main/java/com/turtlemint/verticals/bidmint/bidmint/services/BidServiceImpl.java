@@ -69,19 +69,20 @@ public class BidServiceImpl implements IBidService {
         update.set(AMOUNT, amount);
         Bid bid = bidMintDaoFactory.getBidDao().findById(bidId);
         update.set("percent", percent);
+        bid.setStatus(BidMintEnums.ACTIVE);
         update.set(STATUS, BidMintEnums.ACTIVE);
         if (percent < 100) {
             update.set(STATUS, BidMintEnums.PARTIAL);
+            bid.setStatus(BidMintEnums.PARTIAL);
         }
         Proposal proposal = bidMintDaoFactory.getProposalDao().findById(bid.getProposalId());
         bid.setAmount(amount);
         bid.setPublishedAt(Instant.now().getEpochSecond());
-        bid.setStatus(BidMintEnums.ACTIVE);
         Integer agreed = ScoreUtils.computeAgreementOnQuestions(proposal.getProposalQuestions().get(0),
                 bid.getProposalAnswers().get(0));
         bid.setAgreementOnQuestions(agreed);
         update.set("agreementOnQuestions", agreed);
-        if (proposal.getNumberOfParticipants() == 0 && BidMintEnums.DRAFT.equals(bid.getStatus())) {
+        if (proposal.getNumberOfParticipants() == 0 ) {
             BidStats bidStats = new BidStats();
             bidStats.setBidScore(100.00);
             bidStats.setExcessAmount(0.00);
@@ -91,7 +92,7 @@ public class BidServiceImpl implements IBidService {
             proposal.setBestBid(bid);
             proposal.setAvgAgreementOnQuestions(bid.getAgreementOnQuestions());
             proposal.setAvgBidAmount(bid.getAmount());
-        } else if (BidMintEnums.ACTIVE.equals(bid.getStatus())) {
+        } else {
             getBestBidAndUpdateOtherBids(proposal, bid);
         }
         update.set("bidStats", bid.getBidStats());
@@ -116,8 +117,8 @@ public class BidServiceImpl implements IBidService {
 
     public void getBestBidAndUpdateOtherBids(Proposal proposal, Bid bid) {
         Bid bestBid = proposal.getBestBid();
-        double score = ScoreUtils.calculateBidScoreWRTCurrentBid(bid, bestBid);
-        if (score < bestBid.getBidStats().getBidScore()) {
+        double score = ScoreUtils.calculateBidScoreWRTBestBid(bid, bestBid);
+        if (score > bestBid.getBidStats().getBidScore()) {
             // update proposal
             proposal.setBestBid(bid);
             proposal.setAvgBidAmount(proposal.getAvgBidAmount() + bid.getAmount() / 2);
@@ -132,10 +133,10 @@ public class BidServiceImpl implements IBidService {
         List<Double> bidScores = new ArrayList<>();
         // check for same score/input check
         for (Bid bid : allBids) {
-            if (BidMintEnums.ACTIVE.equals(bid.getStatus())) {
-                if (bid.getId().equals(currentBid.getId()))
-                    bid = currentBid;
-                double score = ScoreUtils.calculateBidScoreWRTCurrentBid(bid, currentBid);
+            if (bid.getId().equals(currentBid.getId()))
+                bid = currentBid;
+            if (!BidMintEnums.DRAFT.equals(bid.getStatus())) {
+                double score = ScoreUtils.calculateBidScoreWRTBestBid(bid, proposal.getBestBid());
                 bidScores.add(score);
                 BidStats bidStats = new BidStats();
                 if (Objects.nonNull(bid.getBidStats()))
@@ -151,9 +152,9 @@ public class BidServiceImpl implements IBidService {
         }
 
         for (Bid bid : allBids) {
-            if (BidMintEnums.ACTIVE.equals(bid.getStatus())) {
-                if (bid.getId().equals(currentBid.getId()))
-                    bid = currentBid;
+            if (bid.getId().equals(currentBid.getId()))
+                bid = currentBid;
+            if (!BidMintEnums.DRAFT.equals(bid.getStatus())) {
                 Double currentBidScore = bid.getBidStats().getBidScore();
                 double normalizedScore = ScoreUtils.normalizeBidScore(bidScores, currentBidScore);
                 bid.getBidStats().setBidScore(normalizedScore);
@@ -237,7 +238,7 @@ public class BidServiceImpl implements IBidService {
 
         Map<Double, List<String>> map = new TreeMap<>(Collections.reverseOrder());
         for (Bid bid : allBids) {
-            if (BidMintEnums.ACTIVE.equals(bid.getStatus())) {
+            if (!BidMintEnums.DRAFT.equals(bid.getStatus())) {
                 Double key = bid.getBidStats().getBidScore();
                 if (!map.containsKey(key)){
                     List<String> sameScoreBids = new ArrayList<>();

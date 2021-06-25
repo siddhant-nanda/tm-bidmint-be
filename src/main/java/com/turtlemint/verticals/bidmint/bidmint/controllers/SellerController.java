@@ -35,4 +35,7 @@ public class SellerController {
         return bidMintServiceFactory.getSellerService().getSeller(sellerId).map(buyerDTO -> new ResponseEntity<>(buyerDTO,
                 HttpStatus.OK)).defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
+
+
+
 }
