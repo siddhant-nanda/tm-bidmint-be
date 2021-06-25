@@ -30,6 +30,9 @@ public class BidServiceImpl implements IBidService {
     @Autowired
     IProposalService proposalService;
 
+    @Autowired
+    NotificationServiceProvider notificationServiceProvider;
+
     @Override
     public Mono<BuyerDTO> createBid(Bid bid) {
         BuyerDTO buyerDTO = new BuyerDTO();
@@ -85,7 +88,7 @@ public class BidServiceImpl implements IBidService {
 
         return bidMintDaoFactory.getBidDao().updateBidById(bidId, update).flatMap(
                 updateResult -> {
-                    if (NotificationServiceProvider.sendNotification(getNsTemplateForBuyer(bid), "Bid")
+                    if (notificationServiceProvider.sendNotification(getNsTemplateForBuyer(bid), "Bid")
                             && proposalService.updateProposalDetails(bid.getProposalId(), proposal)) {
                         buyerDTO.setStatusCode(HttpStatus.OK.value());
                         buyerDTO.setMessage("Bid is Published and Notification is Triggered");
@@ -160,8 +163,8 @@ public class BidServiceImpl implements IBidService {
                 add(seller.getEmailId());
             }
         });
-        if (NotificationServiceProvider.sendNotification(notificationTemplateBuyer, "ABB")
-                && NotificationServiceProvider.sendNotification(notificationTemplateSeller, "ABS")) {
+        if (notificationServiceProvider.sendNotification(notificationTemplateBuyer, "ABB")
+                && notificationServiceProvider.sendNotification(notificationTemplateSeller, "ABS")) {
             buyerDTO.setStatusCode(HttpStatus.OK.value());
             buyerDTO.setMessage("Notification is Triggered");
             return Mono.just(buyerDTO);

@@ -23,6 +23,9 @@ public class BuyerServiceImpl implements IBuyerService {
     @Autowired
     BidMintDaoFactory bidMintDaoFactory;
 
+    @Autowired
+    NotificationServiceProvider notificationServiceProvider;
+
 
     public Mono<BuyerDTO> createBuyer(Buyer buyer) {
         BuyerDTO buyerDTO = new BuyerDTO();
@@ -92,7 +95,7 @@ public class BuyerServiceImpl implements IBuyerService {
                         toEmailList.add(seller.getEmailId());
                     }
                     notificationTemplate.setToEmail(toEmailList);
-                    if (NotificationServiceProvider.sendNotification(notificationTemplate, "Proposal")) {
+                    if (notificationServiceProvider.sendNotification(notificationTemplate, "Proposal")) {
                         buyerDTO.setStatusCode(HttpStatus.OK.value());
                         buyerDTO.setMessage("Proposal is Published and Notification is Triggered");
                         return Mono.just(buyerDTO);
