@@ -59,9 +59,9 @@ public class BidController {
     }
 
     @RequestMapping(value = "/bids-per-proposal", method = RequestMethod.GET)
-    public Flux<ResponseEntity<Bid>> getBidsByProposalId(@RequestParam String proposalId) {
+    public Flux<ResponseEntity<Bid>> getBidsByProposalId(@RequestParam String proposalId, @RequestParam(required = false) String topN) {
 
-        return bidMintServiceFactory.getBidService().getBidsByProposalId(proposalId).map(bidDTO -> new ResponseEntity<>(bidDTO, HttpStatus.OK))
+        return bidMintServiceFactory.getBidService().getBidsByProposalId(proposalId, topN).map(bidDTO -> new ResponseEntity<>(bidDTO, HttpStatus.OK))
                 .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
     }

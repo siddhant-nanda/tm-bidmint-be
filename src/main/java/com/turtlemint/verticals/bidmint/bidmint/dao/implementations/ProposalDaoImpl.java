@@ -11,7 +11,6 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import javax.validation.constraints.Null;
 import java.util.Objects;
 
 import static com.turtlemint.verticals.bidmint.bidmint.constants.BidMintConstants.*;
@@ -35,7 +34,7 @@ public class ProposalDaoImpl extends AbstractDAOImpl<Proposal> implements IPropo
         if (sellerId != null) {
             query.addCriteria(Criteria.where(SELLER_ID).is(sellerId));
         }
-        if (status!= null && !BidMintEnums.DRAFT.getStatus().equalsIgnoreCase(status)) {
+        if (status != null && !BidMintEnums.DRAFT.getStatus().equalsIgnoreCase(status)) {
             query.addCriteria(Criteria.where(STATUS).is(status));
         } else {
             query.addCriteria(Criteria.where(STATUS).ne(BidMintEnums.DRAFT));

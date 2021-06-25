@@ -20,7 +20,7 @@ public interface IBidService {
 
     Mono<BidDTO> getBidDetails(String bidId);
 
-    Flux<Bid> getBidsByProposalId(String proposalId);
+    Flux<Bid> getBidsByProposalId(String proposalId, String topN);
 
     Mono<BidDTO> mergeBids(String bidIdOne, String bidIdTwo);
 

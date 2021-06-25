@@ -32,7 +32,7 @@ public class Bid {
     BidStats bidStats;
     Integer agreementOnQuestions;
     Integer percent;
-    Boolean isMerged=false;
+    Boolean isMerged = false;
     List<String> mergeList = new ArrayList<>();
     String mergeId;
 }

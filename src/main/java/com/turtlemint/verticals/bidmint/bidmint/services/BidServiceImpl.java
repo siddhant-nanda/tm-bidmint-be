@@ -70,7 +70,7 @@ public class BidServiceImpl implements IBidService {
         Bid bid = bidMintDaoFactory.getBidDao().findById(bidId);
         update.set("percent", percent);
         update.set(STATUS, BidMintEnums.ACTIVE);
-        if (percent < 100){
+        if (percent < 100) {
             update.set(STATUS, BidMintEnums.PARTIAL);
         }
         Proposal proposal = bidMintDaoFactory.getProposalDao().findById(bid.getProposalId());
@@ -81,7 +81,7 @@ public class BidServiceImpl implements IBidService {
                 bid.getProposalAnswers().get(0));
         bid.setAgreementOnQuestions(agreed);
         update.set("agreementOnQuestions", agreed);
-        if (proposal.getNumberOfParticipants() == 0) {
+        if (proposal.getNumberOfParticipants() == 0 && BidMintEnums.DRAFT.equals(bid.getStatus())) {
             BidStats bidStats = new BidStats();
             bidStats.setBidScore(100.00);
             bidStats.setExcessAmount(0.00);
@@ -91,7 +91,7 @@ public class BidServiceImpl implements IBidService {
             proposal.setBestBid(bid);
             proposal.setAvgAgreementOnQuestions(bid.getAgreementOnQuestions());
             proposal.setAvgBidAmount(bid.getAmount());
-        } else {
+        } else if (BidMintEnums.ACTIVE.equals(bid.getStatus())) {
             getBestBidAndUpdateOtherBids(proposal, bid);
         }
         update.set("bidStats", bid.getBidStats());
@@ -132,32 +132,36 @@ public class BidServiceImpl implements IBidService {
         List<Double> bidScores = new ArrayList<>();
         // check for same score/input check
         for (Bid bid : allBids) {
-            if(bid.getId().equals(currentBid.getId()))
-                bid = currentBid;
-            double score = ScoreUtils.calculateBidScoreWRTCurrentBid(bid, currentBid);
-            bidScores.add(score);
-            BidStats bidStats = new BidStats();
-            if (Objects.nonNull(bid.getBidStats()))
-                bid.getBidStats().setBidScore(score);
-            else{
-                bidStats.setBidScore(score);
-                bid.setBidStats(bidStats);
+            if (BidMintEnums.ACTIVE.equals(bid.getStatus())) {
+                if (bid.getId().equals(currentBid.getId()))
+                    bid = currentBid;
+                double score = ScoreUtils.calculateBidScoreWRTCurrentBid(bid, currentBid);
+                bidScores.add(score);
+                BidStats bidStats = new BidStats();
+                if (Objects.nonNull(bid.getBidStats()))
+                    bid.getBidStats().setBidScore(score);
+                else {
+                    bidStats.setBidScore(score);
+                    bid.setBidStats(bidStats);
+                }
+                ScoreUtils.calculateBidStats(bid, proposal);
+                if (bid.getId().equals(currentBid.getId()))
+                    currentBid = bid;
             }
-            ScoreUtils.calculateBidStats(bid, proposal);
-            if(bid.getId().equals(currentBid.getId()))
-                currentBid = bid;
-            }
+        }
 
         for (Bid bid : allBids) {
-            if(bid.getId().equals(currentBid.getId()))
-                bid = currentBid;
-            Double currentBidScore = bid.getBidStats().getBidScore();
-            double normalizedScore = ScoreUtils.normalizeBidScore(bidScores,currentBidScore );
-            bid.getBidStats().setBidScore(normalizedScore);
-            bidMintDaoFactory.getBidDao().save(bid);
+            if (BidMintEnums.ACTIVE.equals(bid.getStatus())) {
+                if (bid.getId().equals(currentBid.getId()))
+                    bid = currentBid;
+                Double currentBidScore = bid.getBidStats().getBidScore();
+                double normalizedScore = ScoreUtils.normalizeBidScore(bidScores, currentBidScore);
+                bid.getBidStats().setBidScore(normalizedScore);
+                bidMintDaoFactory.getBidDao().save(bid);
+            }
         }
 
-        }
+    }
 
     private NotificationTemplate getNsTemplateForBuyer(Bid bid) {
         NotificationTemplate notificationTemplate = new NotificationTemplate();
@@ -225,18 +229,48 @@ public class BidServiceImpl implements IBidService {
     }
 
     @Override
-    public Flux<Bid> getBidsByProposalId(String proposalId) {
-        return bidMintDaoFactory.getBidDao().getAllBidsByProposalIdRx(proposalId);
+    public Flux<Bid> getBidsByProposalId(String proposalId, String topN) {
+        List<Bid> allBids = bidMintDaoFactory.getBidDao().getAllBidsByProposalId(proposalId);
+        List<Bid> topNBids = new ArrayList<>();
+        if (topN == null)
+            return Flux.fromIterable(allBids);
+
+        Map<Double, List<String>> map = new TreeMap<>(Collections.reverseOrder());
+        for (Bid bid : allBids) {
+            if (BidMintEnums.ACTIVE.equals(bid.getStatus())) {
+                Double key = bid.getBidStats().getBidScore();
+                if (!map.containsKey(key)){
+                    List<String> sameScoreBids = new ArrayList<>();
+                    sameScoreBids.add(bid.getId());
+                    map.put(key,sameScoreBids);
+                }else{
+                    List<String> existingBids = map.get(key);
+                    existingBids.add(bid.getId());
+                    map.put(key, existingBids);
+                }
+            }
+        }
+        int n = Integer.parseInt(topN);
+        Iterator it = map.entrySet().iterator();
+        while (n > 0 && it.hasNext()) {
+            Map.Entry<Integer, List<String>> entry = (Map.Entry<Integer, List<String>>) it.next();
+            List<String> presentBids = entry.getValue();
+            for(String b: presentBids){
+                topNBids.add(bidMintDaoFactory.getBidDao().findById(b));
+                n--;
+            }
+        }
+        return Flux.fromIterable(topNBids);
     }
 
     @Override
-    public Mono<BidDTO> mergeBids(String bidIdOne, String bidIdTwo){
+    public Mono<BidDTO> mergeBids(String bidIdOne, String bidIdTwo) {
         try {
             BidDTO bidDTO = new BidDTO();
             Bid bidOne = bidMintDaoFactory.getBidDao().findById(bidIdOne);
             Bid bidTwo = bidMintDaoFactory.getBidDao().findById(bidIdTwo);
             Integer mergePercent = bidOne.getPercent() + bidTwo.getPercent();
-            if (mergePercent>100){
+            if (mergePercent > 100) {
                 bidDTO.setMessage("Percent is more than 100. Please recreate a new bid.");
                 bidDTO.setStatusCode(HttpStatus.BAD_REQUEST.value());
                 return Mono.just(bidDTO);
@@ -265,8 +299,7 @@ public class BidServiceImpl implements IBidService {
             bidDTO.setMessage("Merge Successful");
             bidDTO.setStatusCode(HttpStatus.ACCEPTED.value());
             return Mono.just(bidDTO);
-        }
-        catch (Exception exception) {
+        } catch (Exception exception) {
             BidDTO bidDTO = new BidDTO();
             bidDTO.setMessage("Merge failure");
             bidDTO.setStatusCode(HttpStatus.ACCEPTED.value());
@@ -274,11 +307,11 @@ public class BidServiceImpl implements IBidService {
         }
     }
 
-    public void mergeBidStats(Bid bidOne, Bid bidTwo){
+    public void mergeBidStats(Bid bidOne, Bid bidTwo) {
         BidStats bidOneStats = bidOne.getBidStats();
         BidStats bidTwoStats = bidTwo.getBidStats();
-        Double score = (bidOneStats.getBidScore()*bidOne.getPercent() +
-                bidTwoStats.getBidScore()*bidTwo.getPercent()) / 100;
+        Double score = (bidOneStats.getBidScore() * bidOne.getPercent() +
+                bidTwoStats.getBidScore() * bidTwo.getPercent()) / 100;
         bidOneStats.setBidScore(score);
         bidOne.setBidStats(bidOneStats);
     }
