@@ -62,7 +62,7 @@ public class BidServiceImpl implements IBidService {
     }
 
     @Override
-    public Mono<BuyerDTO> publishBid(String bidId, Double amount, Double percent) {
+    public Mono<BuyerDTO> publishBid(String bidId, Double amount, Integer percent) {
         BuyerDTO buyerDTO = new BuyerDTO();
         Update update = new Update();
         update.set(PUBLISHED_AT, Instant.now().getEpochSecond());
@@ -71,6 +71,7 @@ public class BidServiceImpl implements IBidService {
         update.set("percent", percent);
         bid.setStatus(BidMintEnums.ACTIVE);
         update.set(STATUS, BidMintEnums.ACTIVE);
+        bid.setPercent(percent);
         if (percent < 100) {
             update.set(STATUS, BidMintEnums.PARTIAL);
             bid.setStatus(BidMintEnums.PARTIAL);
@@ -100,6 +101,7 @@ public class BidServiceImpl implements IBidService {
                 updateResult -> {
                     if (notificationServiceProvider.sendNotification(getNsTemplateForBuyer(bid), "Bid")
                             && proposalService.updateProposalDetails(bid.getProposalId(), proposal)) {
+                        checkMergable(bid, proposal);
                         buyerDTO.setStatusCode(HttpStatus.OK.value());
                         buyerDTO.setMessage("Bid is Published and Notification is Triggered");
                         return Mono.just(buyerDTO);
@@ -278,11 +280,22 @@ public class BidServiceImpl implements IBidService {
             }
             bidOne.setPercent(mergePercent);
             bidOne.setAmount(bidOne.getAmount() + bidTwo.getAmount());
+            List<String> emailList = new ArrayList<>();
             if (bidTwo.getIsMerged()) {
                 for (String merge : bidTwo.getMergeList()) {
                     bidOne.getMergeList().add(merge);
+                    Bid merger = bidMintDaoFactory.getBidDao().findById(merge);
+                    Seller seller = bidMintDaoFactory.getSellerDao().findById(merger.getSellerId());
+                    emailList.add(seller.getEmailId());
                 }
             }
+            NotificationTemplate notificationTemplate = new NotificationTemplate();
+            Seller sellerOne = bidMintDaoFactory.getSellerDao().findById(bidOne.getSellerId());
+            Seller sellerTwo = bidMintDaoFactory.getSellerDao().findById(bidTwo.getSellerId());
+            emailList.add(sellerOne.getEmailId());
+            emailList.add(sellerTwo.getEmailId());
+            notificationTemplate.setToEmail(emailList);
+            notificationServiceProvider.sendNotification(notificationTemplate, "MERGE");
             bidOne.getMergeList().add(bidIdTwo);
             bidOne.setIsMerged(true);
             bidTwo.setIsMerged(true);
@@ -317,4 +330,15 @@ public class BidServiceImpl implements IBidService {
         bidOne.setBidStats(bidOneStats);
     }
 
+    public void checkMergable(Bid bid, Proposal proposal){
+        if (bid.getPercent()<100){
+            int requiredPercent = 100 - bid.getPercent();
+            List<Bid> allBids = bidMintDaoFactory.getBidDao().getAllBidsByProposalId(proposal.getId());
+            for (Bid remainBid: allBids){
+                if(remainBid.getPercent() == requiredPercent && !remainBid.getId().equals(bid.getId())){
+                    mergeBids(remainBid.getId(), bid.getId());
+                }
+            }
+        }
+    }
 }

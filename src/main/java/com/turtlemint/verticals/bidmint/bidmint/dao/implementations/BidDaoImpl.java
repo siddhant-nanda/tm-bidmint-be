@@ -47,6 +47,7 @@ public class BidDaoImpl extends AbstractDAOImpl<Bid> implements IBidDao {
         if (Objects.nonNull(proposalId)) {
             final Query query = new Query();
             query.addCriteria(Criteria.where(PROPOSAL_ID).is(proposalId));
+            query.addCriteria(Criteria.where(STATUS).ne(BidMintEnums.DRAFT));
             return findAll(query, Bid.class);
         }
         return findAll(null, Bid.class);
