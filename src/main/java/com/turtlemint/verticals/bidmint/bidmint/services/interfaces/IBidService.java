@@ -14,7 +14,7 @@ public interface IBidService {
 
     Mono<BuyerDTO> createBid(Bid bid);
 
-    Mono<BuyerDTO> publishBid(String bidId, Double amount, Double percent);
+    Mono<BuyerDTO> publishBid(String bidId, Double amount, Integer percent);
 
     Flux<Bid> getBids(String sellerId, String status);
 

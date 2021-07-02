@@ -29,6 +29,9 @@ public class NotificationServiceProvider {
         } else if ("ABB".equalsIgnoreCase(flow)) {
             sendAcceptBidSeller(notificationTemplate);
         }
+        else if ("MERGE".equalsIgnoreCase(flow)) {
+            sendMergeBidSeller(notificationTemplate);
+        }
         String uri = notificationUrl;
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Void> response = restTemplate.postForEntity(uri, notificationTemplate, Void.class);
@@ -84,6 +87,20 @@ public class NotificationServiceProvider {
         contentMap.put("templateUrl", "https://s3.ap-south-1.amazonaws.com/message-templates-1/mintpro/templates/null");
         contentMap.put("isMigrated", true);
         contentMap.put("templateCode", "BIDMINT_SUCCESS_EMAIL_SELLER");
+        contentMap.put("fromName", "BidMint");
+        Map<String, String> templateMappings = new HashMap<>();
+        templateMappings.put("deepLink", dashboardUrl);
+        contentMap.put("mappings", templateMappings);
+        notificationTemplate.setContent(contentMap);
+    }
+
+    public void sendMergeBidSeller(NotificationTemplate notificationTemplate) {
+        Map<String, Object> contentMap = new HashMap<>();
+        contentMap.put("subject", "BidMint Merge Bid Mail - Seller");
+        contentMap.put("fromEmail", "no-reply@turtlemint.com");
+        contentMap.put("templateUrl", "https://s3.ap-south-1.amazonaws.com/message-templates-1/mintpro/templates/null");
+        contentMap.put("isMigrated", true);
+        contentMap.put("templateCode", "BIDMINT_BID_EMAIL");
         contentMap.put("fromName", "BidMint");
         Map<String, String> templateMappings = new HashMap<>();
         templateMappings.put("deepLink", dashboardUrl);

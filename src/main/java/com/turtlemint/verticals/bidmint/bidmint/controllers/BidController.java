@@ -39,7 +39,7 @@ public class BidController {
     @RequestMapping(value = "/publish-bid", method = RequestMethod.POST)
     public Mono<ResponseEntity<BuyerDTO>> publishBid(@RequestParam String bidId,
                                                      @RequestParam Double amount,
-                                                     @RequestParam Double percent) {
+                                                     @RequestParam Integer percent) {
         return bidMintServiceFactory.getBidService().publishBid(bidId, amount, percent).map(bid -> new ResponseEntity<>(bid, HttpStatus.OK))
                 .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
