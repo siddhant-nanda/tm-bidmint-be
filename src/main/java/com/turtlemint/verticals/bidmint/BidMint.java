@@ -15,9 +15,6 @@ import org.springframework.data.mongodb.core.convert.DefaultMongoTypeMapper;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import static com.turtlemint.verticals.bidmint.bidmint.utils.MongoClientProvider.getMongoClient;
 
 @Slf4j
@@ -31,14 +28,11 @@ public class BidMint {
     }
 
     @Bean(name = "mongoTemplateMap")
-    public Map<String, MongoTemplate> getMongoTemplate() {
-        LOG.info("[getMongoTemplate] Creating mongo template");
-        final Map<String, MongoTemplate> templateMap = new HashMap<>();
-        MongoDbFactory mongoDbFactory = mongoDbmongoDbFactory("service.ironman.planturtle.com", "service.ironman.planturtle.com", 27017);
+    public MongoTemplate getMongoTemplate() {
+        MongoDbFactory mongoDbFactory = mongoDbmongoDbFactory("localhost", "localhost", 27017);
         MappingMongoConverter converter = new MappingMongoConverter(new DefaultDbRefResolver(mongoDbFactory), new MongoMappingContext());
         converter.setTypeMapper(new DefaultMongoTypeMapper(null));
-        templateMap.put("broker", new MongoTemplate(mongoDbFactory, converter));
-        return templateMap;
+        return new MongoTemplate(mongoDbFactory, converter);
     }
 
     private MongoDbFactory mongoDbmongoDbFactory(String masterDbServerAddress, String slaveDbServerAddress, Integer dbServerPort) {
