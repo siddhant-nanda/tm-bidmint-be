@@ -197,6 +197,8 @@ public class BidServiceImpl implements IBidService {
                 add(seller.getEmailId());
             }
         });
+        bidMintDaoFactory.getBidDao().save(bid);
+        bidMintDaoFactory.getProposalDao().save(proposal);
         if (notificationServiceProvider.sendNotification(notificationTemplateBuyer, "ABB")
                 && notificationServiceProvider.sendNotification(notificationTemplateSeller, "ABS")) {
             buyerDTO.setStatusCode(HttpStatus.OK.value());
@@ -272,7 +274,7 @@ public class BidServiceImpl implements IBidService {
             BidDTO bidDTO = new BidDTO();
             Bid bidOne = bidMintDaoFactory.getBidDao().findById(bidIdOne);
             Bid bidTwo = bidMintDaoFactory.getBidDao().findById(bidIdTwo);
-            Integer mergePercent = bidOne.getPercent() + bidTwo.getPercent();
+            int mergePercent = bidOne.getPercent() + bidTwo.getPercent();
             if (mergePercent > 100) {
                 bidDTO.setMessage("Percent is more than 100. Please recreate a new bid.");
                 bidDTO.setStatusCode(HttpStatus.BAD_REQUEST.value());
@@ -330,12 +332,12 @@ public class BidServiceImpl implements IBidService {
         bidOne.setBidStats(bidOneStats);
     }
 
-    public void checkMergable(Bid bid, Proposal proposal){
-        if (bid.getPercent()<100){
+    public void checkMergable(Bid bid, Proposal proposal) {
+        if (bid.getPercent() < 100) {
             int requiredPercent = 100 - bid.getPercent();
             List<Bid> allBids = bidMintDaoFactory.getBidDao().getAllBidsByProposalId(proposal.getId());
-            for (Bid remainBid: allBids){
-                if(remainBid.getPercent() == requiredPercent && !remainBid.getId().equals(bid.getId())){
+            for (Bid remainBid : allBids) {
+                if (remainBid.getPercent() == requiredPercent && !remainBid.getId().equals(bid.getId())) {
                     mergeBids(remainBid.getId(), bid.getId());
                 }
             }
