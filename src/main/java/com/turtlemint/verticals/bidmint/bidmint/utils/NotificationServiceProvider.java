@@ -28,8 +28,7 @@ public class NotificationServiceProvider {
             sendAcceptBidBuyer(notificationTemplate);
         } else if ("ABB".equalsIgnoreCase(flow)) {
             sendAcceptBidSeller(notificationTemplate);
-        }
-        else if ("MERGE".equalsIgnoreCase(flow)) {
+        } else if ("MERGE".equalsIgnoreCase(flow)) {
             sendMergeBidSeller(notificationTemplate);
         }
         String uri = notificationUrl;
